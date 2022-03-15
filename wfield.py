@@ -5,6 +5,8 @@ from scipy.optimize import fmin, minimize, rosen, rosen_der
 from itertools import product
 from copy import copy
  
+#FUNCTIONS
+
 def expf(x,L):
    return complex(np.cos(2*np.pi*x/L),np.sin(2*np.pi*x/L))
 
