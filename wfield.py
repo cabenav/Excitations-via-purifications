@@ -71,7 +71,7 @@ Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.m
 #EIGENVALUES
 
 print(np.diag(Ham1)[6:15])
-w, v = LA.eig(Ham(Ham1,Ham2,0)[6:15,6:15]).
+w, v = LA.eig(Ham(Ham1,Ham2,0)[6:15,6:15])
 
 print(w)
 #[L+1:int(L+L*(L-1)/2),L+1:L+int(L*(L-1)/2)])
