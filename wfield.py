@@ -22,14 +22,20 @@ def Ham(H1,H2,U):
 def chop(expr, *, max=0.0000001+0.0000001j):
     return [i if i > max else 0 for i in expr]
 
+def Unitary(th,a1,a2,a3,a4,Od):
+   Useorigin
 
+ 
 #NUMBER OF SITES:
 L = 5
 print(L)
 
 #NUMBER OF PARTICLES
-N = 2
+N = 25
 
+#WEIGHTS:
+##Remember that there should be as many w as sites L
+w = [0.5,0.4,0.3,0.2,0.1]
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
 ## This generates the Hilbert space {|000>,|001>,...} but in a non-organized way
@@ -109,6 +115,9 @@ plt.plot(FI1, eigen[:,8],'bo')
 plt.plot(FI1, eigen[:,9],'ko')
 plt.xlabel("$\eta$")
 plt.show()
+
+
+#QUANTUM ALGORITHM: here starts the quantum calculation
 
 
 
