@@ -4,6 +4,12 @@ import math, cmath
 from scipy.optimize import fmin, minimize, rosen, rosen_der
 from itertools import product
 from copy import copy
+import matplotlib.pyplot as plt
+from scipy import interpolate
+from scipy.interpolate import make_lsq_spline, BSpline
+from scipy.interpolate import make_interp_spline
+from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
+from scipy.interpolate import interp1d
  
 #FUNCTIONS
 
@@ -20,6 +26,10 @@ def chop(expr, *, max=0.0000001+0.0000001j):
 #NUMBER OF SITES:
 L = 5
 print(L)
+
+#NUMBER OF PARTICLES
+N = 2
+
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
 ## This generates the Hilbert space {|000>,|001>,...} but in a non-organized way
@@ -70,11 +80,37 @@ Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.m
 
 #EIGENVALUES
 
-print(np.diag(Ham1)[6:15])
-w, v = LA.eig(Ham(Ham1,Ham2,0)[6:15,6:15])
+eigen = []
 
-print(w)
+for u in range(10):
+   w, v = LA.eig(Ham(Ham1,Ham2,u)[6:16,6:16])
+   eigen.append(w)
+
+print(w.shape)
+eigen = np.array(eigen)
+
 #[L+1:int(L+L*(L-1)/2),L+1:L+int(L*(L-1)/2)])
+
+FI1 =[0,1,2,3,4,5, 6, 7, 8, 9]
+FI1 = np.array(FI1)
+print(np.array(FI1), eigen[:,0])
+
+plt.rc('axes', labelsize=25)
+plt.rc('font', size=15)  
+plt.plot(FI1, eigen[:,0],'bo')
+plt.plot(FI1, eigen[:,1],'ko')
+plt.plot(FI1, eigen[:,2],'bo')
+plt.plot(FI1, eigen[:,3],'ko')
+plt.plot(FI1, eigen[:,4],'bo')
+plt.plot(FI1, eigen[:,5],'ko')
+plt.plot(FI1, eigen[:,6],'bo')
+plt.plot(FI1, eigen[:,7],'ko')
+plt.plot(FI1, eigen[:,8],'bo')
+plt.plot(FI1, eigen[:,9],'ko')
+plt.xlabel("$\eta$")
+plt.show()
+
+
 
 
 #def f(x):
