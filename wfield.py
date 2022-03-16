@@ -16,12 +16,10 @@ def Ham(H1,H2,U):
 def chop(expr, *, max=0.0000001+0.0000001j):
     return [i if i > max else 0 for i in expr]
 
-def f(x):
-   return x**2
-
 
 #NUMBER OF SITES:
-L = 8
+L = 5
+print(L)
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
 ## This generates the Hilbert space {|000>,|001>,...} but in a non-organized way
@@ -79,9 +77,9 @@ print(w)
 #[L+1:int(L+L*(L-1)/2),L+1:L+int(L*(L-1)/2)])
 
 
-def f(x):
-    return x**2
+#def f(x):
+ #   return x**2
 
-fmin(f,np.array([0]))
+#fmin(f,np.array([0]))
    
 
