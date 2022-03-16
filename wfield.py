@@ -19,19 +19,19 @@ def expf(x,L):
 def Ham(H1,H2,U):
    return H1+np.multiply(H2,U)
 
-def chop(expr, *, max=0.0000001+0.0000001j):
-    return [i if i > max else 0 for i in expr]
-
 def Unitary(th,a1,a2,a3,a4,Od):
-   Useorigin
+   OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Od[a1]),np.transpose(Od[a2])),Od[a3]),Od[a4])-np.matmul(np.matmul(np.matmul(Od[a4],Od[a3]),np.transpose(Od[a2])),np.transpose(Od[a1]))
+   return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
- 
 #NUMBER OF SITES:
 L = 5
 print(L)
 
 #NUMBER OF PARTICLES
 N = 25
+
+#TROTTER STEPS
+trotter = 3
 
 #WEIGHTS:
 ##Remember that there should be as many w as sites L
@@ -88,18 +88,17 @@ Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.m
 
 eigen = []
 
-for u in range(10):
+for u in range(11):
    w, v = LA.eig(Ham(Ham1,Ham2,u)[6:16,6:16])
    eigen.append(w)
 
-print(w.shape)
 eigen = np.array(eigen)
 
+print(np.sum(Unitary(np.pi/2,1,1,2,2,Op),axis=1))
 #[L+1:int(L+L*(L-1)/2),L+1:L+int(L*(L-1)/2)])
 
-FI1 =[0,1,2,3,4,5, 6, 7, 8, 9]
+FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
-print(np.array(FI1), eigen[:,0])
 
 plt.rc('axes', labelsize=25)
 plt.rc('font', size=15)  
