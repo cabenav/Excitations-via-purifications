@@ -19,7 +19,7 @@ def expf(x,L):
 def Ham(H1,H2,U):
    return H1+np.multiply(H2,U)
 
-def Unitary(th,a1,a2,a3,a4,Od):
+def UnD(th,a1,a2,a3,a4,Od):
    OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Od[a1]),np.transpose(Od[a2])),Od[a3]),Od[a4])-np.matmul(np.matmul(np.matmul(Od[a4],Od[a3]),np.transpose(Od[a2])),np.transpose(Od[a1]))
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
@@ -73,7 +73,7 @@ for j in range(L):
          if np.array_equal(res1[j1],res2[j2]):
             Op[j,j1,j2] = sta[j2]*aux2[j2]
 
-##This optional to verify the fermionic commutation rules:
+##This is optional to verify the fermionic commutation rules:
 #print(np.sum(Op[0],axis=1))
 #print(np.diag(np.matmul(np.transpose(Op[0]), Op[0])+np.matmul(Op[0],np.transpose(Op[0]))))
 
@@ -94,7 +94,7 @@ for u in range(11):
 
 eigen = np.array(eigen)
 
-print(np.sum(Unitary(np.pi/2,1,1,2,2,Op),axis=1))
+print(np.sum(UnD(np.pi/2,1,1,2,2,Op),axis=1))
 #[L+1:int(L+L*(L-1)/2),L+1:L+int(L*(L-1)/2)])
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
