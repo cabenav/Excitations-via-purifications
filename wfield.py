@@ -10,6 +10,7 @@ from scipy.interpolate import make_lsq_spline, BSpline
 from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
+import scipy.optimize as optimize
  
 #FUNCTIONS
 
@@ -118,12 +119,17 @@ plt.show()
 
 #QUANTUM ALGORITHM: here starts the quantum calculation
 
-hhh
 
+def f(params):
+   x,y = params
+   return (x-2)**2+(2+y)**2*x**2
 
-#def f(x):
- #   return x**2
-
-#fmin(f,np.array([0]))
+result = optimize.minimize(f,[1,1])
+print(result)
+if result.success:
+    fitted_params = result.x
+    print(fitted_params)
+else:
+    raise ValueError(result.message)
    
 
