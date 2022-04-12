@@ -21,7 +21,7 @@ def Ham(H1,H2,U):
    return H1+np.multiply(H2,U)
 
 def UnD(th,a1,a2,a3,a4,Od):
-   OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Od[a1]),np.transpose(Od[a2])),Od[a3]),Od[a4])-np.matmul(np.matmul(np.matmul(Od[a4],Od[a3]),np.transpose(Od[a2])),np.transpose(Od[a1]))
+   OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Od[a1]),np.transpose(Od[a2])),Od[a3]),Od[a4])-np.matmul(np.matmul(np.matmul(np.transpose(Od[a4]),np.transpose(Od[a3])),Od[a2]),Od[a1])
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 #NUMBER OF SITES:
@@ -125,11 +125,12 @@ def f(params):
    return (x-2)**2+(2+y)**2*x**2
 
 result = optimize.minimize(f,[1,1])
-print(result)
 if result.success:
     fitted_params = result.x
     print(fitted_params)
 else:
     raise ValueError(result.message)
    
-
+print(UnD(20,0,1,2,3,Op)[0:31])
+#print(np.matmul(Op[1].Op[2])[0:31])
+#print(Op[2][0:31])
