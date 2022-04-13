@@ -33,7 +33,7 @@ def UnD(th,a1,a2,a3,a4,Od):
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 #NUMBER OF SITES:
-L = 8
+L = 5
 print(L)
 
 #NUMBER OF PARTICLES
