@@ -33,7 +33,7 @@ def UnD(th,a1,a2,a3,a4,Od):
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 #NUMBER OF SITES:
-L = 5
+L = 8
 print(L)
 
 #NUMBER OF PARTICLES
@@ -137,20 +137,18 @@ for j1 in range(len(res)):
          #print(res[j1],res[k1],common_member(res[j1],res[k1]),j1,k1)
          Doubles.append((res[j1],res[k1]))
 
-print(Doubles[1][1])
-
-def f(params):
+def Unit(params,Doubles,Hamil,Od):
    x = params
-   return (x[0]-2)**2+(2+3*x[1])**2+(3+x[0])**2
+   Full = np.identity(2**L)
+   Full1 = np.identity(2**L)
+   for j1 in range(len(Doubles)):
+      Full = np.matmul(UnD(x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od),Full)
+      Full1 = np.matmul(Full, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od))
+   return np.matmul(np.matmul(Full1,Hamil),Full)
 
-result = optimize.minimize(f,[1,1])
-if result.success:
-    fitted_params = result.x
-    print(fitted_params)
-else:
-    raise ValueError(result.message)
-   
-#print(UnD(20,0,1,2,3,Op)[0:31])
-#print(np.matmul(Op[1].Op[2])[0:31])
-#print(Op[2][0:31])
+seed=list(np.full(len(Doubles),10))
+
+print(Unit(seed,Doubles,Ham(Ham1,Ham2,0),Op))
+
+
 
