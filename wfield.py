@@ -127,17 +127,21 @@ plt.xlabel("$U/t$")
 
 #QUANTUM ALGORITHM: here starts the quantum calculation
 
+#Generation of all Doubles Excitations
 test_list = np.arange(0, L, 1).tolist()
 res = list(combinations(test_list,2))
+Doubles = []
+for j1 in range(len(res)):
+   for k1 in range(j1+1,len(res)):
+      if(common_member(res[j1],res[k1])==False):
+         #print(res[j1],res[k1],common_member(res[j1],res[k1]),j1,k1)
+         Doubles.append((res[j1],res[k1]))
 
-print("All possible pairs : " + str(res))
-print(res[1],res[3],common_member(res[1],res[3]))
-
-print('th'+'1' )
+print(Doubles[1][1])
 
 def f(params):
-   (x,y) = params
-   return (x-2)**2+(2+y)**2*x**2
+   x = params
+   return (x[0]-2)**2+(2+3*x[1])**2+(3+x[0])**2
 
 result = optimize.minimize(f,[1,1])
 if result.success:
