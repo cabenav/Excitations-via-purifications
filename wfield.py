@@ -2,7 +2,7 @@ import numpy as np
 from numpy import linalg as LA
 import math, cmath
 from scipy.optimize import fmin, minimize, rosen, rosen_der
-from itertools import product
+from itertools import product, combinations
 from copy import copy
 import matplotlib.pyplot as plt
 from scipy import interpolate
@@ -16,6 +16,14 @@ import scipy.optimize as optimize
 
 def expf(x,L):
    return complex(np.cos(2*np.pi*x/L),np.sin(2*np.pi*x/L))
+
+def common_member(a, b):
+    a_set = set(a)
+    b_set = set(b)
+    if (a_set & b_set):
+        return True 
+    else:
+        return False
 
 def Ham(H1,H2,U):
    return H1+np.multiply(H2,U)
@@ -101,27 +109,34 @@ print(np.sum(UnD(np.pi/2,1,1,2,2,Op),axis=1))
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
 
-plt.rc('axes', labelsize=25)
+plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-plt.plot(FI1, eigen[:,0],'bo')
-plt.plot(FI1, eigen[:,1],'ko')
-plt.plot(FI1, eigen[:,2],'bo')
-plt.plot(FI1, eigen[:,3],'ko')
-plt.plot(FI1, eigen[:,4],'bo')
-plt.plot(FI1, eigen[:,5],'ko')
-plt.plot(FI1, eigen[:,6],'bo')
-plt.plot(FI1, eigen[:,7],'ko')
-plt.plot(FI1, eigen[:,8],'bo')
-plt.plot(FI1, eigen[:,9],'ko')
-plt.xlabel("$\eta$")
-plt.show()
+plt.plot(FI1, eigen[:,0],'b*')
+plt.plot(FI1, eigen[:,1],'b*')
+plt.plot(FI1, eigen[:,2],'b*')
+plt.plot(FI1, eigen[:,3],'b*')
+plt.plot(FI1, eigen[:,4],'b*')
+plt.plot(FI1, eigen[:,5],'b*')
+plt.plot(FI1, eigen[:,6],'b*')
+plt.plot(FI1, eigen[:,7],'b*')
+plt.plot(FI1, eigen[:,8],'b*')
+plt.plot(FI1, eigen[:,9],'b*')
+plt.xlabel("$U/t$")
+#plt.show()
 
 
 #QUANTUM ALGORITHM: here starts the quantum calculation
 
+test_list = np.arange(0, L, 1).tolist()
+res = list(combinations(test_list,2))
+
+print("All possible pairs : " + str(res))
+print(res[1],res[3],common_member(res[1],res[3]))
+
+print('th'+'1' )
 
 def f(params):
-   x,y = params
+   (x,y) = params
    return (x-2)**2+(2+y)**2*x**2
 
 result = optimize.minimize(f,[1,1])
@@ -131,6 +146,7 @@ if result.success:
 else:
     raise ValueError(result.message)
    
-print(UnD(20,0,1,2,3,Op)[0:31])
+#print(UnD(20,0,1,2,3,Op)[0:31])
 #print(np.matmul(Op[1].Op[2])[0:31])
 #print(Op[2][0:31])
+
