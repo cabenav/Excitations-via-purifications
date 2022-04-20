@@ -32,6 +32,10 @@ def UnD(th,a1,a2,a3,a4,Od):
    OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Od[a1]),np.transpose(Od[a2])),Od[a3]),Od[a4])-np.matmul(np.matmul(np.matmul(np.transpose(Od[a4]),np.transpose(Od[a3])),Od[a2]),Od[a1])
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
+def UnS(th,a1,a2,Od):
+   OpAux = np.matmul(np.transpose(Od[a1]),Od[a2])-np.matmul(np.transpose(Od[a2]),Od[a1])
+   return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
+
 #NUMBER OF SITES:
 L = 5
 print(L)
@@ -96,6 +100,12 @@ Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.m
 #EIGENVALUES
 
 eigen = []
+w, v = LA.eig(Ham(Ham1,Ham2,0)[1:L+1,1:L+1])
+eigen.append(w)
+eigen = np.array(eigen)
+print(eigen.real)
+
+eigen = [] 
 
 for u in range(11):
    w, v = LA.eig(Ham(Ham1,Ham2,u)[6:16,6:16])
@@ -129,26 +139,33 @@ plt.xlabel("$U/t$")
 
 #Generation of all Doubles Excitations
 test_list = np.arange(0, L, 1).tolist()
-res = list(combinations(test_list,2))
+res2 = list(combinations(test_list,2))
 Doubles = []
-for j1 in range(len(res)):
-   for k1 in range(j1+1,len(res)):
-      if(common_member(res[j1],res[k1])==False):
-         #print(res[j1],res[k1],common_member(res[j1],res[k1]),j1,k1)
-         Doubles.append((res[j1],res[k1]))
+for j1 in range(len(res2)):
+   for k1 in range(j1+1,len(res2)):
+      if(common_member(res2[j1],res2[k1])==False):
+         #print(res2[j1],res2[k1],common_member(res2[j1],res2[k1]),j1,k1)
+         Doubles.append((res2[j1],res2[k1]))
 
-def Unit(params,Doubles,Hamil,Od):
+def Unit(params,Doubles,res2,Hamil,Od):
    x = params
    Full = np.identity(2**L)
    Full1 = np.identity(2**L)
+   FullS = np.identity(2**L)
+   Full1S = np.identity(2**L)
    for j1 in range(len(Doubles)):
       Full = np.matmul(UnD(x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od),Full)
-      Full1 = np.matmul(Full, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od))
+      Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od))
+   for j1 in range(len(Doubles),len(Doubles)+len(res2)):
+      j11 = j1-len(Doubles)
+      FullS = np.matmul(UnS(x[j11],res2[j11][0],res2[j11][1],Od),FullS)
+      Full1S = np.matmul(Full1S, UnS(-x[j11],res2[j11][0],res2[j11][1],Od))
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
-seed=list(np.full(len(Doubles),10))
+seed=list(np.full(len(Doubles)+len(res2),10))
+print(seed,len(Doubles),len(Doubles)+len(res2))
 
-print(Unit(seed,Doubles,Ham(Ham1,Ham2,0),Op))
+print(Unit(seed,Doubles,res2,Ham(Ham1,Ham2,0),Op))
 
 
 
