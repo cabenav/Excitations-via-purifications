@@ -36,19 +36,15 @@ def UnS(th,a1,a2,Od):
    OpAux = np.matmul(np.transpose(Od[a1]),Od[a2])-np.matmul(np.transpose(Od[a2]),Od[a1])
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
-#NUMBER OF SITES:
-L = 5
-print(L)
+#NUMBER OF SITES and TROTTER STEPS:
+L = int(input("Number (integer) of sites: "))
+trotter = int(input("Trotter (integer) steps: "))
 
-#NUMBER OF PARTICLES
-N = 25
-
-#TROTTER STEPS
-trotter = 3
 
 #WEIGHTS:
 ##Remember that there should be as many w as sites L
 w = [0.5,0.4,0.3,0.2,0.1]
+print(w)
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
 ## This generates the Hilbert space {|000>,|001>,...} but in a non-organized way
@@ -97,19 +93,29 @@ Ham1 =-sum(np.multiply(expf((k1-k2)*jj,L)*expf(-k2,L)/L,np.matmul(np.transpose(O
 
 Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.matmul(np.matmul(np.transpose(Op[k1]), Op[k2]),np.transpose(Op[k3])),Op[k4])) for k1 in range(L) for k2 in range(L) for k3 in range(L) for k4 in range(L) for jj in range(L))
 
-#EIGENVALUES
+#EIGENVALUES AND w IN DECREASING ORDER
 
 eigen = []
-w, v = LA.eig(Ham(Ham1,Ham2,0)[1:L+1,1:L+1])
-eigen.append(w)
+wnew = copy(w)
+v1, v2 = LA.eig(Ham(Ham1,Ham2,0)[1:L+1,1:L+1])
+eigen.append(v1)
 eigen = np.array(eigen)
 print(eigen.real)
+order = np.argsort(eigen.real)
+print(w)
 
+for z in range(L):
+   zz = L-1-z 
+   wnew[order[0][zz]] = w[zz]
+
+w = copy(wnew)
+print(w)
+   
 eigen = [] 
 
 for u in range(11):
-   w, v = LA.eig(Ham(Ham1,Ham2,u)[6:16,6:16])
-   eigen.append(w)
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[L+1:16,L+1:16])
+   eigen.append(v1)
 
 eigen = np.array(eigen)
 
