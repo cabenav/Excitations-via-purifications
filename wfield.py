@@ -36,6 +36,18 @@ def UnS(th,a1,a2,Od):
    OpAux = np.matmul(np.transpose(Od[a1]),Od[a2])-np.matmul(np.transpose(Od[a2]),Od[a1])
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
+
+def vecf(w,res1):
+   vec = []   
+   for i in range(len(res1)):
+      cont = 1     
+      for x in range(len(w)):
+         cont *= w[x]**res1[i][x]*(1-w[x])**(1-res1[i][x]) 
+      vec.append(cont)
+   return vec       
+      
+         
+
 #NUMBER OF SITES and TROTTER STEPS:
 L = int(input("Number (integer) of sites: "))
 trotter = int(input("Trotter (integer) steps: "))
@@ -63,6 +75,9 @@ for j in range(L+1):
 order= sum(vec,[])
 for j in range(2**L):
    res1[j] = res[order[j]]
+
+print(res1)
+print(len(res1))
 
 #GENERATION OF THE ANHILITATION OPERATORS
 ##Op[0],Op[1]... are the anhilitation operators for sites 0,1,...
@@ -138,7 +153,7 @@ plt.plot(FI1, eigen[:,7],'b*')
 plt.plot(FI1, eigen[:,8],'b*')
 plt.plot(FI1, eigen[:,9],'b*')
 plt.xlabel("$U/t$")
-#plt.show()
+plt.show()
 
 
 #QUANTUM ALGORITHM: here starts the quantum calculation
@@ -173,5 +188,7 @@ print(seed,len(Doubles),len(Doubles)+len(res2))
 
 print(Unit(seed,Doubles,res2,Ham(Ham1,Ham2,0),Op))
 
+weights = vecf(w,res1)
+print(w,weights)
 
 
