@@ -168,7 +168,7 @@ for j1 in range(len(res2)):
          #print(res2[j1],res2[k1],common_member(res2[j1],res2[k1]),j1,k1)
          Doubles.append((res2[j1],res2[k1]))
 
-def Unit(params,Doubles,res2,Hamil,Od):
+def Unit(params,Doubles,res2,Hamil,Od,trotter):
    x = params
    Full = np.identity(2**L)
    Full1 = np.identity(2**L)
@@ -181,14 +181,25 @@ def Unit(params,Doubles,res2,Hamil,Od):
       j11 = j1-len(Doubles)
       FullS = np.matmul(UnS(x[j11],res2[j11][0],res2[j11][1],Od),FullS)
       Full1S = np.matmul(Full1S, UnS(-x[j11],res2[j11][0],res2[j11][1],Od))
+   Full = np.matmul(LA.matrix_power(Full, trotter),FullS)
+   Full1 = np.matmul(Full1S,LA.matrix_power(Full1, trotter))
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
-seed=list(np.full(len(Doubles)+len(res2),10))
-print(seed,len(Doubles),len(Doubles)+len(res2))
-
-print(Unit(seed,Doubles,res2,Ham(Ham1,Ham2,0),Op))
+def function(weights,seed,Doubles,res1,res2,Ham,Op,trotter):
+   matrizSD = Unit(seed,Doubles,res2,Ham,Op,trotter)
+   elem = 0
+   for ji in range(len(weights)):
+      vec=np.zeros(len(weights))
+      vec[ji]=1
+      elem += weights[ji]*np.matmul(np.matmul(vec,matrizSD),vec)
+   print(elem)
+   
+   
 
 weights = vecf(w,res1)
-print(w,weights)
+print(len(weights))
+seed=list(np.full(len(Doubles)+len(res2),10))
+
+function(weights,seed,Doubles,res1,res2,Ham(Ham1,Ham2,0),Op,trotter)
 
 
