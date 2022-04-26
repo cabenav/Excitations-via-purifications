@@ -34,7 +34,7 @@ def UnD(th,a1,a2,a3,a4,Od):
 
 def UnS(th,a1,a2,Od):
    OpAux = np.matmul(np.transpose(Od[a1]),Od[a2])-np.matmul(np.transpose(Od[a2]),Od[a1])
-   return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
+   return np.identity(2**L)#+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 
 def vecf(w,res1):
@@ -55,8 +55,12 @@ trotter = int(input("Trotter (integer) steps: "))
 
 #WEIGHTS:
 ##Remember that there should be as many w as sites L
-w = [0.5,0.4,0.3,0.2,0.1]
-print(w)
+#w = [0.5,0.4,0.3,0.2,0.1]
+#print(L)
+w = list(np.arange(0.5/L,0.5+0.01,0.5/L))
+round_to_w = [round(num, 3) for num in w]
+print("Weights are:", round_to_w)
+
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
 ## This generates the Hilbert space {|000>,|001>,...} but in a non-organized way
@@ -76,8 +80,6 @@ order= sum(vec,[])
 for j in range(2**L):
    res1[j] = res[order[j]]
 
-print(res1)
-print(len(res1))
 
 #GENERATION OF THE ANHILITATION OPERATORS
 ##Op[0],Op[1]... are the anhilitation operators for sites 0,1,...
@@ -115,26 +117,25 @@ wnew = copy(w)
 v1, v2 = LA.eig(Ham(Ham1,Ham2,0)[1:L+1,1:L+1])
 eigen.append(v1)
 eigen = np.array(eigen)
-print(eigen.real)
+#print(eigen.real)
 order = np.argsort(eigen.real)
-print(w)
+#print(w)
 
 for z in range(L):
    zz = L-1-z 
    wnew[order[0][zz]] = w[zz]
 
 w = copy(wnew)
-print(w)
-   
 eigen = [] 
 
 for u in range(11):
-   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[L+1:16,L+1:16])
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[L+1:L+1+int(L*(L-1)/2),L+1:L+1+int(L*(L-1)/2)])
    eigen.append(v1)
 
+print(eigen[0])
 eigen = np.array(eigen)
 
-print(np.sum(UnD(np.pi/2,1,1,2,2,Op),axis=1))
+#print(np.sum(UnD(np.pi/2,1,1,2,2,Op),axis=1))
 #[L+1:int(L+L*(L-1)/2),L+1:L+int(L*(L-1)/2)])
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
@@ -142,16 +143,8 @@ FI1 = np.array(FI1)
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-plt.plot(FI1, eigen[:,0],'b*')
-plt.plot(FI1, eigen[:,1],'b*')
-plt.plot(FI1, eigen[:,2],'b*')
-plt.plot(FI1, eigen[:,3],'b*')
-plt.plot(FI1, eigen[:,4],'b*')
-plt.plot(FI1, eigen[:,5],'b*')
-plt.plot(FI1, eigen[:,6],'b*')
-plt.plot(FI1, eigen[:,7],'b*')
-plt.plot(FI1, eigen[:,8],'b*')
-plt.plot(FI1, eigen[:,9],'b*')
+for i in range(int(L*(L-1)/2)):
+   plt.plot(FI1, eigen[:,i],'b*')
 plt.xlabel("$U/t$")
 plt.show()
 
@@ -179,27 +172,58 @@ def Unit(params,Doubles,res2,Hamil,Od,trotter):
       Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od))
    for j1 in range(len(Doubles),len(Doubles)+len(res2)):
       j11 = j1-len(Doubles)
-      FullS = np.matmul(UnS(x[j11],res2[j11][0],res2[j11][1],Od),FullS)
-      Full1S = np.matmul(Full1S, UnS(-x[j11],res2[j11][0],res2[j11][1],Od))
+      FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
+      Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
    Full = np.matmul(LA.matrix_power(Full, trotter),FullS)
    Full1 = np.matmul(Full1S,LA.matrix_power(Full1, trotter))
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
-def function(weights,seed,Doubles,res1,res2,Ham,Op,trotter):
+def function(seed,weights,Doubles,res2,Ham,Op,trotter):
    matrizSD = Unit(seed,Doubles,res2,Ham,Op,trotter)
    elem = 0
    for ji in range(len(weights)):
       vec=np.zeros(len(weights))
       vec[ji]=1
       elem += weights[ji]*np.matmul(np.matmul(vec,matrizSD),vec)
-   print(elem)
+   return elem
    
    
 
 weights = vecf(w,res1)
-print(len(weights))
-seed=list(np.full(len(Doubles)+len(res2),10))
+print(len(Doubles)+len(res2))
+seed=list(np.full(len(Doubles)+len(res2),0))
+print(function(seed,weights,Doubles,res2,Ham(Ham1,Ham2,1),Op,trotter))
 
-function(weights,seed,Doubles,res1,res2,Ham(Ham1,Ham2,0),Op,trotter)
 
+result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter),maxfun=20000,maxiter=20000,ftol=1e-2,xtol=1e-4)
+vec=np.zeros(len(weights))
+vec[6]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[7]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[8]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[9]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[10]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[11]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[12]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[13]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[14]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+vec=np.zeros(len(weights))
+vec[15]=1
+print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
 
