@@ -213,11 +213,8 @@ for u in range(11):
       vec=np.zeros(len(weights))
       vec[ni + i]=1
       eigennum[u,i] = np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
-   print(eigennum)
+   #print(eigennum)
 
-
-print(eigennum)
-print(eigennum[:,1])
 
 
 plt.rc('axes', labelsize=15)
