@@ -34,7 +34,7 @@ def UnD(th,a1,a2,a3,a4,Od):
 
 def UnS(th,a1,a2,Od):
    OpAux = np.matmul(np.transpose(Od[a1]),Od[a2])-np.matmul(np.transpose(Od[a2]),Od[a1])
-   return np.identity(2**L)#+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
+   return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 
 def vecf(w,res1):
@@ -133,8 +133,6 @@ for z in range(L):
    wnew[order[0][L-1-z]] = w[z]
 
 w = copy(wnew)
-print(eigen.real)
-print(w)
 
 eigen = [] 
 
@@ -142,7 +140,6 @@ for u in range(11):
    v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[ni:ni+nf,ni:ni+nf])
    eigen.append(v1)
 
-print(eigen[0])
 eigen = np.array(eigen)
 
 #print(np.sum(UnD(np.pi/2,1,1,2,2,Op),axis=1))
@@ -150,14 +147,13 @@ eigen = np.array(eigen)
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
-print(eigen) 
+#print(eigen) 
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(nf):
    plt.plot(FI1, eigen[:,i],'b*')
 plt.xlabel("$U/t$")
-plt.show()
 
 
 #QUANTUM ALGORITHM: here starts the quantum calculation
