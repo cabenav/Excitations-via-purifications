@@ -67,6 +67,8 @@ else:
 
 round_to_w = [round(num, 3) for num in w]
 print("The weights are: ", round_to_w)
+print("************************")
+print("Now the calculations start (relax)")
 
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
@@ -176,12 +178,20 @@ def Unit(params,Doubles,res2,Hamil,Od,trotter):
    for j1 in range(len(Doubles)):
       Full = np.matmul(UnD(x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od),Full)
       Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od))
-   for j1 in range(len(Doubles),len(Doubles)+len(res2)):
-      j11 = j1-len(Doubles)
+   for j1 in range(len(Doubles),2*len(Doubles)):
+      j11 =  j1-len(Doubles)
+      Full = np.matmul(UnD(x[j1],Doubles[j11][0][0],Doubles[j11][0][1],Doubles[j11][1][0],Doubles[j11][1][1],Od),Full)
+      Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j11][0][0],Doubles[j11][0][1],Doubles[j11][1][0],Doubles[j11][1][1],Od))
+   for j1 in range(2*len(Doubles),2*len(Doubles)+len(res2)):
+      j11 = j1-2*len(Doubles)
       FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
       Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
-   Full = np.matmul(FullS,np.matmul(LA.matrix_power(Full, trotter),FullS))
-   Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),Full1S)
+   for j1 in range(2*len(Doubles),2*len(Doubles)+len(res2)):
+      j11 = j1-2*len(Doubles)-len(res2)
+      FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
+      Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
+   Full = np.matmul(LA.matrix_power(FullS,trotter),np.matmul(LA.matrix_power(Full, trotter),FullS))
+   Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
 def function(seed,weights,Doubles,res2,Ham,Op,trotter):
@@ -198,10 +208,10 @@ def function(seed,weights,Doubles,res2,Ham,Op,trotter):
 weights = vecf(w,res1)
 
 eigennum = np.zeros((11,nf))
-for u in range(6):
+for u in range(11):
    print("I am computing the energies for the copling u: ", u)
-   seed=list(np.full(len(Doubles)+len(res2),0))
-   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=20000,maxiter=20000,ftol=1e-2,xtol=1e-4)
+   seed=list(np.full(2*len(Doubles)+2*len(res2),0))
+   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=30000,maxiter=30000,ftol=1e-4,xtol=1e-6)
    vec=np.zeros(len(weights))
    vecaux=np.zeros(nf)
    for i in range(nf):
