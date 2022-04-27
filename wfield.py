@@ -56,7 +56,6 @@ w = list(np.arange(0.5/L,0.5+0.01,0.5/L))
 Num = int(input("Number of particles: "))
 ni = int(math.factorial(L)/(math.factorial(Num-1)*math.factorial(L-Num+1))+1)
 nf = int(math.factorial(L)/(math.factorial(Num)*math.factorial(L-Num)))
-print(ni,nf)
 
 if answer == "y":
    for i in range(L):
@@ -181,8 +180,8 @@ def Unit(params,Doubles,res2,Hamil,Od,trotter):
       j11 = j1-len(Doubles)
       FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
       Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
-   Full = np.matmul(LA.matrix_power(Full, trotter),FullS)
-   Full1 = np.matmul(Full1S,LA.matrix_power(Full1, trotter))
+   Full = np.matmul(FullS,np.matmul(LA.matrix_power(Full, trotter),FullS))
+   Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),Full1S)
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
 def function(seed,weights,Doubles,res2,Ham,Op,trotter):
@@ -199,7 +198,7 @@ def function(seed,weights,Doubles,res2,Ham,Op,trotter):
 weights = vecf(w,res1)
 
 eigennum = np.zeros((11,nf))
-for u in range(11):
+for u in range(6):
    print("I am computing the energies for the copling u: ", u)
    seed=list(np.full(len(Doubles)+len(res2),0))
    result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=20000,maxiter=20000,ftol=1e-2,xtol=1e-4)
@@ -217,7 +216,7 @@ plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(int(L*(L-1)/2)):
    plt.plot(FI1, eigen[:,i],'b*')
-   plt.plot(FI1, eigennum[:,i],'r*')
+   plt.plot(FI1, eigennum[:,i],'r+')
 plt.xlabel("$U/t$")
 plt.show()
 
