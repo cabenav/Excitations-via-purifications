@@ -66,9 +66,15 @@ else:
     print("Please next time enter (y/n). I take my weights.")
 
 round_to_w = [round(num, 3) for num in w]
-print("The weights are: ", round_to_w)
 print("************************")
+print("************************")
+print("The weights are: ", round_to_w)
 print("Now the calculations start (relax)")
+print("****************************")
+print("*   *   *  *** * *** *   *** ")
+print(" * * * *   **  * **  *   * * ")
+print("  *   *    *   * *** *** *** ")
+print("***************************")
 
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
@@ -186,7 +192,7 @@ def Unit(params,Doubles,res2,Hamil,Od,trotter):
       j11 = j1-2*len(Doubles)
       FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
       Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
-   for j1 in range(2*len(Doubles),2*len(Doubles)+len(res2)):
+   for j1 in range(2*len(Doubles)+len(res2),2*len(Doubles)+2*len(res2)):
       j11 = j1-2*len(Doubles)-len(res2)
       FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
       Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
@@ -211,7 +217,7 @@ eigennum = np.zeros((11,nf))
 for u in range(11):
    print("I am computing the energies for the copling u: ", u)
    seed=list(np.full(2*len(Doubles)+2*len(res2),0))
-   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=30000,maxiter=30000,ftol=1e-4,xtol=1e-6)
+   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=30000,maxiter=30000,ftol=1e-3,xtol=1e-3)
    vec=np.zeros(len(weights))
    vecaux=np.zeros(nf)
    for i in range(nf):
