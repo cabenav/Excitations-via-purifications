@@ -159,7 +159,7 @@ FI1 = np.array(FI1)
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(nf):
-   plt.plot(FI1, eigen[:,i],'b*')
+   plt.plot(FI1, eigen[:,i], 'bo', mfc='none')
 plt.xlabel("$U/t$")
 
 
@@ -215,7 +215,7 @@ weights = vecf(w,res1)
 
 eigennum = np.zeros((11,nf))
 for u in range(11):
-   print("I am computing the energies for the copling u: ", u)
+   print("I am computing the energies for the coupling u: ", u)
    seed=list(np.full(2*len(Doubles)+2*len(res2),0))
    result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=30000,maxiter=30000,ftol=1e-3,xtol=1e-3)
    vec=np.zeros(len(weights))
@@ -231,8 +231,8 @@ for u in range(11):
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(int(L*(L-1)/2)):
-   plt.plot(FI1, eigen[:,i],'b*')
-   plt.plot(FI1, eigennum[:,i],'r+')
+   plt.plot(FI1, eigen[:,i],'bo', mfc='none')
+   plt.plot(FI1, eigennum[:,i],'r*')
 plt.xlabel("$U/t$")
 plt.show()
 
