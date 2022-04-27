@@ -150,6 +150,7 @@ eigen = np.array(eigen)
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
+print(eigen) 
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
@@ -201,8 +202,9 @@ def function(seed,weights,Doubles,res2,Ham,Op,trotter):
 
 weights = vecf(w,res1)
 
-eigennum = [] 
+eigennum = np.zeros((11,nf))
 for u in range(11):
+   print("I am computing the energies for the copling u: ", u)
    seed=list(np.full(len(Doubles)+len(res2),0))
    result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=20000,maxiter=20000,ftol=1e-2,xtol=1e-4)
    vec=np.zeros(len(weights))
@@ -210,11 +212,12 @@ for u in range(11):
    for i in range(nf):
       vec=np.zeros(len(weights))
       vec[ni + i]=1
-      vecaux[i] = np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
-      print(vecaux)
-   eigennum.append(vecaux)
+      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
+   print(eigennum)
+
 
 print(eigennum)
+print(eigennum[:,1])
 
 
 plt.rc('axes', labelsize=15)
