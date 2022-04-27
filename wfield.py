@@ -48,18 +48,26 @@ def vecf(w,res1):
       
          
 
-#NUMBER OF SITES and TROTTER STEPS:
-L = int(input("Number (integer) of sites: "))
+#NUMBER OF SITES, WEIGHTS and TROTTER STEPS:
+L = int(input("L number (integer) of sites: "))
 trotter = int(input("Trotter (integer) steps: "))
+answer = input("Do you want to introduce the w-values (y/n): ")
+w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
+Num = int(input("Number of particles: "))
+ni = int(math.factorial(L)/(math.factorial(Num-1)*math.factorial(L-Num+1))+1)
+nf = int(math.factorial(L)/(math.factorial(Num)*math.factorial(L-Num)))
+print(ni,nf)
 
+if answer == "y":
+   for i in range(L):
+      w[i] = float(input("Please enter a weight between 0 and 0.5: "))
+elif answer == "n": 
+   w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
+else: 
+    print("Please next time enter (y/n). I take my weights.")
 
-#WEIGHTS:
-##Remember that there should be as many w as sites L
-#w = [0.5,0.4,0.3,0.2,0.1]
-#print(L)
-w = list(np.arange(0.5/L,0.5+0.01,0.5/L))
 round_to_w = [round(num, 3) for num in w]
-print("Weights are:", round_to_w)
+print("The weights are: ", round_to_w)
 
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
@@ -121,15 +129,17 @@ eigen = np.array(eigen)
 order = np.argsort(eigen.real)
 #print(w)
 
-for z in range(L):
-   zz = L-1-z 
-   wnew[order[0][zz]] = w[zz]
+for z in range(L): 
+   wnew[order[0][L-1-z]] = w[z]
 
 w = copy(wnew)
+print(eigen.real)
+print(w)
+
 eigen = [] 
 
 for u in range(11):
-   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[L+1:L+1+int(L*(L-1)/2),L+1:L+1+int(L*(L-1)/2)])
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[ni:ni+nf,ni:ni+nf])
    eigen.append(v1)
 
 print(eigen[0])
@@ -143,7 +153,7 @@ FI1 = np.array(FI1)
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-for i in range(int(L*(L-1)/2)):
+for i in range(nf):
    plt.plot(FI1, eigen[:,i],'b*')
 plt.xlabel("$U/t$")
 plt.show()
@@ -190,40 +200,28 @@ def function(seed,weights,Doubles,res2,Ham,Op,trotter):
    
 
 weights = vecf(w,res1)
-print(len(Doubles)+len(res2))
-seed=list(np.full(len(Doubles)+len(res2),0))
-print(function(seed,weights,Doubles,res2,Ham(Ham1,Ham2,1),Op,trotter))
+
+eigennum = [] 
+for u in range(11):
+   seed=list(np.full(len(Doubles)+len(res2),0))
+   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=20000,maxiter=20000,ftol=1e-2,xtol=1e-4)
+   vec=np.zeros(len(weights))
+   vecaux=np.zeros(nf)
+   for i in range(nf):
+      vec=np.zeros(len(weights))
+      vec[ni + i]=1
+      vecaux[i] = np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
+      print(vecaux)
+   eigennum.append(vecaux)
+
+print(eigennum)
 
 
-result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter),maxfun=20000,maxiter=20000,ftol=1e-2,xtol=1e-4)
-vec=np.zeros(len(weights))
-vec[6]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[7]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[8]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[9]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[10]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[11]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[12]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[13]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[14]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
-vec=np.zeros(len(weights))
-vec[15]=1
-print(np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,0),Op,trotter)),vec))
+plt.rc('axes', labelsize=15)
+plt.rc('font', size=15)  
+for i in range(int(L*(L-1)/2)):
+   plt.plot(FI1, eigen[:,i],'b*')
+   plt.plot(FI1, eigennum[:,i],'r*')
+plt.xlabel("$U/t$")
+plt.show()
 
