@@ -196,10 +196,10 @@ def Unit(params,Doubles,res2,Hamil,Od,trotter):
       j11 = j1-2*len(Doubles)-len(res2)
       FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
       Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
-   #Full = np.matmul(LA.matrix_power(FullS,trotter),np.matmul(LA.matrix_power(Full, trotter),FullS))
-   #Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
-   Full = np.matmul(LA.matrix_power(np.matmul(FullS,Full),trotter),FullS)
-   Full1 = np.matmul(Full1S,LA.matrix_power(np.matmul(Full1,Full1S),trotter))
+   Full = np.matmul(LA.matrix_power(FullS,trotter),np.matmul(LA.matrix_power(Full, trotter),FullS))
+   Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
+   #Full = np.matmul(LA.matrix_power(np.matmul(FullS,Full),trotter),FullS)
+   #Full1 = np.matmul(Full1S,LA.matrix_power(np.matmul(Full1,Full1S),trotter))
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
 def function(seed,weights,Doubles,res2,Ham,Op,trotter):
