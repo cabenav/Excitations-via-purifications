@@ -11,6 +11,7 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 import scipy.optimize as optimize
+import pickle
  
 #FUNCTIONS
 
@@ -206,6 +207,7 @@ def function(seed,weights,Doubles,res2,Ham,Op,trotter):
    matrizSD = Unit(seed,Doubles,res2,Ham,Op,trotter)
    elem = 0
    for ji in range(len(weights)):
+   #for ji in range(ni,ni+nf):
       vec=np.zeros(len(weights))
       vec[ji]=1
       elem += weights[ji]*np.matmul(np.matmul(vec,matrizSD),vec)
@@ -228,7 +230,8 @@ for u in range(11):
       eigennum[u,i] = np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
    #print(eigennum)
 
-
+pickle.dump(eigen, open( "list1.p", "wb" ) )
+pickle.dump(eigennum, open( "list2.p", "wb" ) )
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
