@@ -20,6 +20,7 @@ list2a =  pickle.load( open( "Exact_5_2.p", "rb" ) )
 
 list1c = copy(list1a)
 list1c[1,:] = list1b[1,:]
+list1c[4,:] = list1b[4,:]
 list1c[5,:] = list1b[5,:]
 list1c[7,:] = list1b[7,:]
 list1c[8,:] = list1b[8,:]
