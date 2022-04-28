@@ -196,8 +196,10 @@ def Unit(params,Doubles,res2,Hamil,Od,trotter):
       j11 = j1-2*len(Doubles)-len(res2)
       FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
       Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
-   Full = np.matmul(LA.matrix_power(FullS,trotter),np.matmul(LA.matrix_power(Full, trotter),FullS))
-   Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
+   #Full = np.matmul(LA.matrix_power(FullS,trotter),np.matmul(LA.matrix_power(Full, trotter),FullS))
+   #Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
+   Full = np.matmul(LA.matrix_power(np.matmul(FullS,Full),trotter),FullS)
+   Full1 = np.matmul(Full1S,LA.matrix_power(np.matmul(Full1,Full1S),trotter))
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
 def function(seed,weights,Doubles,res2,Ham,Op,trotter):
@@ -217,7 +219,7 @@ eigennum = np.zeros((11,nf))
 for u in range(11):
    print("I am computing the energies for the coupling u: ", u)
    seed=list(np.full(2*len(Doubles)+2*len(res2),0))
-   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=50000,maxiter=50000,ftol=1e-4,xtol=1e-4)
+   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=1e-4,xtol=1e-4)
    vec=np.zeros(len(weights))
    vecaux=np.zeros(nf)
    for i in range(nf):
