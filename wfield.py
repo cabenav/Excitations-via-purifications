@@ -232,9 +232,12 @@ for u in range(11):
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-for i in range(int(L*(L-1)/2)):
+for i in range(nf-1):
    plt.plot(FI1, eigen[:,i],'bo', mfc='none')
    plt.plot(FI1, eigennum[:,i],'r*')
+plt.plot(FI1, eigen[:,nf-1],'bo', mfc='none',label='exact')
+plt.plot(FI1, eigennum[:,nf-1],'r*', label='UCC')
+plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
 plt.show()
 
