@@ -53,7 +53,7 @@ def vecf(w,res1):
 
 #NUMBER OF SITES, WEIGHTS and TROTTER STEPS:
 L = 6
-trotter = 30
+trotter = 20
 w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
 Num = 2
 ni = int(math.factorial(L)/(math.factorial(Num-1)*math.factorial(L-Num+1))+1)
@@ -214,7 +214,7 @@ seed=list(np.full(2*len(Doubles)+2*len(res2),0))
 eigennum = np.zeros((11,nf))
 for u in range(11):
    print("I am computing the energies for the coupling u: ", u)
-   seed = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=1e-3,xtol=1e-3)
+   seed = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=5e-4,xtol=5e-4)
    vec=np.zeros(nf)
    vecaux=np.zeros(nf)
    for i in range(nf):
