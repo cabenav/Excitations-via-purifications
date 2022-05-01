@@ -50,21 +50,12 @@ def vecf(w,res1):
          
 
 #NUMBER OF SITES, WEIGHTS and TROTTER STEPS:
-L = int(input("L number (integer) of sites: "))
-trotter = int(input("Trotter (integer) steps: "))
-answer = input("Do you want to introduce the w-values (y/n): ")
+L = 5
+trotter = 25
 w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
-Num = int(input("Number of particles: "))
+Num = 2
 ni = int(math.factorial(L)/(math.factorial(Num-1)*math.factorial(L-Num+1))+1)
 nf = int(math.factorial(L)/(math.factorial(Num)*math.factorial(L-Num)))
-
-if answer == "y":
-   for i in range(L):
-      w[i] = float(input("Please enter a weight between 0 and 0.5: "))
-elif answer == "n": 
-   w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
-else: 
-    print("Please next time enter (y/n). I take my weights.")
 
 round_to_w = [round(num, 3) for num in w]
 print("************************")

@@ -31,11 +31,13 @@ def Ham(H1,H2,U):
 
 def UnD(th,a1,a2,a3,a4,Od):
    OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Od[a1]),np.transpose(Od[a2])),Od[a3]),Od[a4])-np.matmul(np.matmul(np.matmul(np.transpose(Od[a4]),np.transpose(Od[a3])),Od[a2]),Od[a1])
-   return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
+   OpAux = OpAux[ni:ni+nf,ni:ni+nf]
+   return np.identity(nf)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 def UnS(th,a1,a2,Od):
    OpAux = np.matmul(np.transpose(Od[a1]),Od[a2])-np.matmul(np.transpose(Od[a2]),Od[a1])
-   return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
+   OpAux = OpAux[ni:ni+nf,ni:ni+nf]
+   return np.identity(nf)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 
 def vecf(w,res1):
@@ -50,21 +52,12 @@ def vecf(w,res1):
          
 
 #NUMBER OF SITES, WEIGHTS and TROTTER STEPS:
-L = int(input("L number (integer) of sites: "))
-trotter = int(input("Trotter (integer) steps: "))
-answer = input("Do you want to introduce the w-values (y/n): ")
+L = 6
+trotter = 30
 w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
-Num = int(input("Number of particles: "))
+Num = 2
 ni = int(math.factorial(L)/(math.factorial(Num-1)*math.factorial(L-Num+1))+1)
 nf = int(math.factorial(L)/(math.factorial(Num)*math.factorial(L-Num)))
-
-if answer == "y":
-   for i in range(L):
-      w[i] = float(input("Please enter a weight between 0 and 0.5: "))
-elif answer == "n": 
-   w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
-else: 
-    print("Please next time enter (y/n). I take my weights.")
 
 round_to_w = [round(num, 3) for num in w]
 print("************************")
@@ -178,10 +171,10 @@ for j1 in range(len(res2)):
 
 def Unit(params,Doubles,res2,Hamil,Od,trotter):
    x = params
-   Full = np.identity(2**L)
-   Full1 = np.identity(2**L)
-   FullS = np.identity(2**L)
-   Full1S = np.identity(2**L)
+   Full = np.identity(nf)
+   Full1 = np.identity(nf)
+   FullS = np.identity(nf)
+   Full1S = np.identity(nf)
    for j1 in range(len(Doubles)):
       Full = np.matmul(UnD(x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od),Full)
       Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od))
@@ -201,37 +194,37 @@ def Unit(params,Doubles,res2,Hamil,Od,trotter):
    Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
    #Full = np.matmul(LA.matrix_power(np.matmul(FullS,Full),trotter),FullS)
    #Full1 = np.matmul(Full1S,LA.matrix_power(np.matmul(Full1,Full1S),trotter))
-   return np.matmul(np.matmul(Full1,Hamil),Full)
+   return np.matmul(np.matmul(Full1,Hamil[ni:ni+nf,ni:ni+nf]),Full)
 
 def function(seed,weights,Doubles,res2,Ham,Op,trotter):
    matrizSD = Unit(seed,Doubles,res2,Ham,Op,trotter)
    elem = 0
-   for ji in range(len(weights)):
-   #for ji in range(ni,ni+nf):
-      vec=np.zeros(len(weights))
+   #for ji in range(len(weights)):
+   for ji in range(nf):
+      vec=np.zeros(nf)
       vec[ji]=1
-      elem += weights[ji]*np.matmul(np.matmul(vec,matrizSD),vec)
+      elem += weights[ji+ni]*np.matmul(np.matmul(vec,matrizSD),vec)
    return elem
    
    
 
 weights = vecf(w,res1)
+seed=list(np.full(2*len(Doubles)+2*len(res2),0))
 
 eigennum = np.zeros((11,nf))
 for u in range(11):
    print("I am computing the energies for the coupling u: ", u)
-   seed=list(np.full(2*len(Doubles)+2*len(res2),0))
-   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=1e-3,xtol=1e-3)
-   vec=np.zeros(len(weights))
+   seed = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=1e-3,xtol=1e-3)
+   vec=np.zeros(nf)
    vecaux=np.zeros(nf)
    for i in range(nf):
-      vec=np.zeros(len(weights))
-      vec[ni + i]=1
-      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
+      vec=np.zeros(nf)
+      vec[i]=1
+      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(seed,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
    #print(eigennum)
 
-pickle.dump(eigen, open( "list1.p", "wb" ) )
-pickle.dump(eigennum, open( "list2.p", "wb" ) )
+pickle.dump(eigen, open( "list10.p", "wb" ) )
+pickle.dump(eigennum, open( "list20.p", "wb" ) )
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  

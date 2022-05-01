@@ -3,6 +3,7 @@ import random
 import pickle
 import gzip as gz
 import csv
+import math, cmath
 from copy import copy
 import matplotlib.pyplot as plt
 import pickle
@@ -12,29 +13,13 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 
-nf = 10
+nf = int(math.factorial(6)/(math.factorial(2)*math.factorial(4)))
 
-list1a =  pickle.load( open( "Figure_5_25_1.p", "rb" ) )
-list1b =  pickle.load( open( "Figure_5_25_2.p", "rb" ) )
-list2a =  pickle.load( open( "Exact_5_2.p", "rb" ) )
+list2 =  pickle.load( open( "list1.p", "rb" ) )
+list1 =  pickle.load( open( "list2.p", "rb" ) )
 
-list1c = copy(list1a)
-list1c[1,:] = list1b[1,:]
-list1c[2,:] = list1b[2,:]
-list1c[3,:] = list1b[3,:]
-list1c[4,:] = list1b[4,:]
-list1c[5,:] = list1b[5,:]
-list1c[7,:] = list1b[7,:]
-list1c[8,:] = list1b[8,:]
-list1c[9,:] = list1b[9,:]
-list1 = np.zeros((10,10))
-list2 = np.zeros((10,10))
-
-for i in range(len(list1c)-1):
-   list1[i] = list1c[i]
-   list2[i] = list2a[i]
-
-FI1 =[0,1,2,3,4,5, 6, 7, 8, 9]
+FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
+list1[1,:] = list2[1,:]
 FI1 = np.array(FI1)
 
 plt.rc('axes', labelsize=15)
@@ -53,10 +38,10 @@ def func(vec, vec1):
    for j in range(len(vec)):
       dis = 1
       for i in range(len(vec1)):
-        # if (float(abs((vec[j].real - vec1[i].real)/vec1[i].real)))**2 < dis:
-         #    dis = (float(abs((vec[j].real - vec1[i].real)/vec1[i].real)))**2
-         if (float(abs((vec[j].real - vec1[i].real)))) < dis:
-             dis = (float(abs((vec[j].real - vec1[i].real)/vec1[i].real)))**2
+         if (float(abs((vec[j].real - vec1[i].real)/vec1[i].real)))**2 < dis:
+            dis = (float(abs((vec[j].real - vec1[i].real)/vec1[i].real)))**2
+         #if (float(abs((vec[j].real - vec1[i].real)))) < dis:
+          #   dis = (float(abs((vec[j].real - vec1[i].real)/vec1[i].real)))**2
       disT += dis
    return np.sqrt(disT)/len(vec1)
 
