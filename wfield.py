@@ -216,22 +216,39 @@ def function(seed,weights,Doubles,res2,Ham,Op,trotter):
    
 
 weights = vecf(w,res1)
-
 eigennum = np.zeros((11,nf))
+eigenor= np.zeros((11,nf))
+eigennumor = np.zeros((11,nf))
+gap = np.zeros(11)
+gapnum = np.zeros(11)
+gap2 = np.zeros(11)
+gapnum2 = np.zeros(11)
+
+seed=list(np.full(2*len(Doubles)+2*len(res2),0))
+
 for u in range(11):
    print("I am computing the energies for the coupling u: ", u)
-   seed=list(np.full(2*len(Doubles)+2*len(res2),0))
-   result = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=1e-3,xtol=1e-3)
+   seed = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=1e-4,xtol=1e-4)
    vec=np.zeros(len(weights))
    vecaux=np.zeros(nf)
    for i in range(nf):
       vec=np.zeros(len(weights))
       vec[ni + i]=1
-      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(result,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
+      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(seed,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
    #print(eigennum)
+   eigenor[u] = list(eigen.real[u])
+   eigenor[u].sort() 
+   eigennumor[u] = list(eigennum.real[u])
+   eigennumor[u].sort()   
+   gap[u] = eigenor[u,1]-eigenor[u,0]
+   gapnum[u] = eigennumor[u][1]-eigennumor[u][0]
+   gap2[u] = eigenor[u,2]-eigenor[u,0]
+   gapnum2[u] = eigennumor[u][2]-eigennumor[u][0]
+ 
 
 pickle.dump(eigen, open( "list1.p", "wb" ) )
 pickle.dump(eigennum, open( "list2.p", "wb" ) )
+
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
@@ -240,6 +257,22 @@ for i in range(nf-1):
    plt.plot(FI1, eigennum[:,i],'r*')
 plt.plot(FI1, eigen[:,nf-1],'bo', mfc='none',label='exact')
 plt.plot(FI1, eigennum[:,nf-1],'r*', label='UCC')
+plt.legend(prop={"size":15},loc='upper left')
+plt.xlabel("$U/t$")
+plt.show()
+
+plt.rc('axes', labelsize=15)
+plt.rc('font', size=15)  
+plt.plot(FI1, gap,'bo', mfc='none',label='exact')
+plt.plot(FI1, gapnum,'r*',label='UCC')
+plt.legend(prop={"size":15},loc='upper left')
+plt.xlabel("$U/t$")
+plt.show()
+
+plt.rc('axes', labelsize=15)
+plt.rc('font', size=15)  
+plt.plot(FI1, gap2,'bo', mfc='none',label='exact')
+plt.plot(FI1, gapnum2,'r*',label='UCC')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
 plt.show()
