@@ -13,10 +13,10 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 
-nf = int(math.factorial(6)/(math.factorial(2)*math.factorial(4)))
+nf = int(math.factorial(8)/(math.factorial(2)*math.factorial(6)))
 
-list2 =  pickle.load( open( "list1.p", "rb" ) )
-list1 =  pickle.load( open( "list2.p", "rb" ) )
+list2 =  pickle.load( open( "list8a.p", "rb" ) )
+list1 =  pickle.load( open( "list8b.p", "rb" ) )
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 list1[1,:] = list2[1,:]

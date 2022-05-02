@@ -214,7 +214,7 @@ seed=list(np.full(2*len(Doubles)+2*len(res2),0))
 eigennum = np.zeros((11,nf))
 for u in range(11):
    print("I am computing the energies for the coupling u: ", u)
-   seed = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=5e-4,xtol=5e-4)
+   seed = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=1000000,maxiter=1000000,ftol=1e-4,xtol=1e-4)
    vec=np.zeros(nf)
    vecaux=np.zeros(nf)
    for i in range(nf):
