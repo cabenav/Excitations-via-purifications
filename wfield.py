@@ -10,6 +10,7 @@ from scipy.interpolate import make_lsq_spline, BSpline
 from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
+import numdifftools as nd
 import scipy.optimize as optimize
 import pickle
  
@@ -29,12 +30,12 @@ def common_member(a, b):
 def Ham(H1,H2,U):
    return H1+np.multiply(H2,U)
 
-def UnD(th,a1,a2,a3,a4,Od):
-   OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Od[a1]),np.transpose(Od[a2])),Od[a3]),Od[a4])-np.matmul(np.matmul(np.matmul(np.transpose(Od[a4]),np.transpose(Od[a3])),Od[a2]),Od[a1])
+def UnD(th,a1,a2,a3,a4):
+   OpAux = np.matmul(np.matmul(np.matmul(np.transpose(Op[a1]),np.transpose(Op[a2])),Op[a3]),Op[a4])-np.matmul(np.matmul(np.matmul(np.transpose(Op[a4]),np.transpose(Op[a3])),Op[a2]),Op[a1])
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
-def UnS(th,a1,a2,Od):
-   OpAux = np.matmul(np.transpose(Od[a1]),Od[a2])-np.matmul(np.transpose(Od[a2]),Od[a1])
+def UnS(th,a1,a2):
+   OpAux = np.matmul(np.transpose(Op[a1]),Op[a2])-np.matmul(np.transpose(Op[a2]),Op[a1])
    return np.identity(2**L)+np.multiply(OpAux,np.sin(th))-np.multiply((np.cos(th)-1),np.matmul(OpAux,OpAux))
 
 
@@ -99,7 +100,7 @@ for j in range(2**L):
 
 #GENERATION OF THE ANHILITATION OPERATORS
 ##Op[0],Op[1]... are the anhilitation operators for sites 0,1,...
-Op = np.zeros((L,2**L,2**L))
+Op = np.zeros((L+1,2**L,2**L))
 
 for j in range(L):
    res2 = [ele for ele in product([0,0], repeat = L)]
@@ -115,6 +116,8 @@ for j in range(L):
          if np.array_equal(res1[j1],res2[j2]):
             Op[j,j1,j2] = sta[j2]*aux2[j2]
 
+Op[L] = Op[0]
+
 ##This is optional to verify the fermionic commutation rules:
 #print(np.sum(Op[0],axis=1))
 #print(np.diag(np.matmul(np.transpose(Op[0]), Op[0])+np.matmul(Op[0],np.transpose(Op[0]))))
@@ -125,6 +128,10 @@ for j in range(L):
 Ham1 =-sum(np.multiply(expf((k1-k2)*jj,L)*expf(-k2,L)/L,np.matmul(np.transpose(Op[k1]), Op[k2]))+np.multiply(expf((k1-k2)*jj,L)*expf(k1,L)/L,np.matmul(np.transpose(Op[k1]), Op[k2])) for k1 in range(L) for k2 in range(L) for jj in range(L))
 
 Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.matmul(np.matmul(np.transpose(Op[k1]), Op[k2]),np.transpose(Op[k3])),Op[k4])) for k1 in range(L) for k2 in range(L) for k3 in range(L) for k4 in range(L) for jj in range(L))
+
+#Ham1 =-sum(np.matmul(np.transpose(Op[k1]), Op[k1+1])+np.matmul(np.transpose(Op[k1+1]), Op[k1]) for k1 in range(L))
+
+#Ham2 =sum(np.matmul(np.matmul(np.matmul(np.transpose(Op[k1]), Op[k1]),np.transpose(Op[k1+1])),Op[k1+1]) for k1 in range(L))
 
 #EIGENVALUES AND w IN DECREASING ORDER
 
@@ -176,44 +183,67 @@ for j1 in range(len(res2)):
          #print(res2[j1],res2[k1],common_member(res2[j1],res2[k1]),j1,k1)
          Doubles.append((res2[j1],res2[k1]))
 
-def Unit(params,Doubles,res2,Hamil,Od,trotter):
+def Unit(params,res2,Hamil):
    x = params
    Full = np.identity(2**L)
    Full1 = np.identity(2**L)
    FullS = np.identity(2**L)
    Full1S = np.identity(2**L)
    for j1 in range(len(Doubles)):
-      Full = np.matmul(UnD(x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od),Full)
-      Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1],Od))
+      Full = np.matmul(UnD(x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1]),Full)
+      Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1]))
    for j1 in range(len(Doubles),2*len(Doubles)):
       j11 =  j1-len(Doubles)
-      Full = np.matmul(UnD(x[j1],Doubles[j11][0][0],Doubles[j11][0][1],Doubles[j11][1][0],Doubles[j11][1][1],Od),Full)
-      Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j11][0][0],Doubles[j11][0][1],Doubles[j11][1][0],Doubles[j11][1][1],Od))
+      Full = np.matmul(UnD(x[j1],Doubles[j11][0][0],Doubles[j11][0][1],Doubles[j11][1][0],Doubles[j11][1][1]),Full)
+      Full1 = np.matmul(Full1, UnD(-x[j1],Doubles[j11][0][0],Doubles[j11][0][1],Doubles[j11][1][0],Doubles[j11][1][1]))
    for j1 in range(2*len(Doubles),2*len(Doubles)+len(res2)):
       j11 = j1-2*len(Doubles)
-      FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
-      Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
+      FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1]),FullS)
+      Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1]))
    for j1 in range(2*len(Doubles)+len(res2),2*len(Doubles)+2*len(res2)):
       j11 = j1-2*len(Doubles)-len(res2)
-      FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1],Od),FullS)
-      Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1],Od))
+      FullS = np.matmul(UnS(x[j1],res2[j11][0],res2[j11][1]),FullS)
+      Full1S = np.matmul(Full1S, UnS(-x[j1],res2[j11][0],res2[j11][1]))
    Full = np.matmul(LA.matrix_power(FullS,trotter),np.matmul(LA.matrix_power(Full, trotter),FullS))
    Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
    #Full = np.matmul(LA.matrix_power(np.matmul(FullS,Full),trotter),FullS)
    #Full1 = np.matmul(Full1S,LA.matrix_power(np.matmul(Full1,Full1S),trotter))
    return np.matmul(np.matmul(Full1,Hamil),Full)
 
-def function(seed,weights,Doubles,res2,Ham,Op,trotter):
-   matrizSD = Unit(seed,Doubles,res2,Ham,Op,trotter)
-   elem = 0
-   for ji in range(len(weights)):
-   #for ji in range(ni,ni+nf):
-      vec=np.zeros(len(weights))
-      vec[ji]=1
-      elem += weights[ji]*np.matmul(np.matmul(vec,matrizSD),vec)
-   return elem
+class function():
+   def __init__(self, weig,res,Hamil):
+      self.res = res
+      self.Hamil = Hamil
+      self.weig = weig
+   def evalua(self,seed):
+      matrizSD = Unit(seed,self.res,self.Hamil)
+      elem = 0
+      for ji in range(len(self.weig)):
+         vec=np.zeros(len(self.weig))
+         vec[ji]=1
+         elem += self.weig[ji]*np.matmul(np.matmul(vec,matrizSD),vec)
+      return elem
+   def grad(self,seed):
+      return nd.Gradient(self.evalua)(seed)
    
-   
+#def function(seed,res2,Ham):
+#   matrizSD = Unit(seed,res2,Ham)
+#   elem = 0
+#   for ji in range(len(weights)):
+#   #for ji in range(ni,ni+nf):
+#      vec=np.zeros(len(weights))
+#      vec[ji]=1
+#      elem += weights[ji]*np.matmul(np.matmul(vec,matrizSD),vec)
+#   return elem
+def gradient_descent(gradient, start, learn_rate, n_iter, tolerance):
+   vector = start
+   for _ in range(n_iter):
+      diff = -learn_rate * gradient(vector).real
+      if np.all(np.abs(diff) <= tolerance):
+         break
+      vector += diff
+   return vector
+
 
 weights = vecf(w,res1)
 eigennum = np.zeros((11,nf))
@@ -228,14 +258,16 @@ seed=list(np.full(2*len(Doubles)+2*len(res2),0))
 
 for u in range(11):
    print("I am computing the energies for the coupling u: ", u)
-   seed = optimize.fmin(function, seed,args=(weights,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter),maxfun=100000,maxiter=100000,ftol=1e-4,xtol=1e-4)
+   fun = function(weights,res2,Ham(Ham1,Ham2,u))
+   #seed = optimize.fmin(fun.evalua, seed,maxfun=100000,maxiter=100000,ftol=1e-2,xtol=1e-2)
+   seed = gradient_descent(fun.grad,seed,0.1,500,1e-03)
    vec=np.zeros(len(weights))
    vecaux=np.zeros(nf)
    for i in range(nf):
       vec=np.zeros(len(weights))
       vec[ni + i]=1
-      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(seed,Doubles,res2,Ham(Ham1,Ham2,u),Op,trotter)),vec)
-   #print(eigennum)
+      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(seed,res2,Ham(Ham1,Ham2,u))),vec)
+   print(eigennum[u])
    eigenor[u] = list(eigen.real[u])
    eigenor[u].sort() 
    eigennumor[u] = list(eigennum.real[u])

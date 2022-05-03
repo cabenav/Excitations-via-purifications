@@ -3,7 +3,6 @@ import random
 import pickle
 import gzip as gz
 import csv
-import math, cmath
 from copy import copy
 import matplotlib.pyplot as plt
 import pickle
@@ -13,10 +12,10 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 
-nf = int(math.factorial(7)/(math.factorial(2)*math.factorial(5)))
+nf = 10
 
-list2 =  pickle.load( open( "list7a.p", "rb" ) )
-list1 =  pickle.load( open( "list7b.p", "rb" ) )
+list2 =  pickle.load( open( "list51.p", "rb" ) )
+list1 =  pickle.load( open( "list52.p", "rb" ) )
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
