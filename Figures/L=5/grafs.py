@@ -14,8 +14,8 @@ from scipy.interpolate import interp1d
 
 nf = 10
 
-list2 =  pickle.load( open( "list3.p", "rb" ) )
-list1 =  pickle.load( open( "list4.p", "rb" ) )
+list2 =  pickle.load( open( "list1.p", "rb" ) )
+list1 =  pickle.load( open( "list2.p", "rb" ) )
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
@@ -49,6 +49,7 @@ plt.plot(FI1, eigenor[:,nf-1],'r-', mfc='none',label='exact')
 plt.plot(FI1, eigennumor[:,nf-1],'ko', mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
+plt.title("L = 5")
 plt.show()
 
 plt.rc('axes', labelsize=15)
@@ -60,6 +61,7 @@ plt.plot(FI1, gap[:,nf-2],'r-', mfc='none',label='exact')
 plt.plot(FI1, gapnum[:,nf-2],'ko',mfc='none', label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
+plt.title("L = 5")
 plt.show()
 
 def func(vec, vec1):

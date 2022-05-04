@@ -87,6 +87,7 @@ plt.plot(FI1, eigenor[:,nf-1],'r-', mfc='none',label='exact')
 plt.plot(FI1, eigennumor[:,nf-1],'ko', mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
+plt.title("L = 6")
 plt.show()
 
 plt.rc('axes', labelsize=15)
@@ -98,6 +99,7 @@ plt.plot(FI1, gap[:,nf-2],'r-', mfc='none',label='exact')
 plt.plot(FI1, gapnum[:,nf-2],'ko',mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
+plt.title("L = 6")
 plt.show()
 
 def func(vec, vec1):
