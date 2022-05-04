@@ -174,7 +174,6 @@ for j1 in range(len(Doubles)):
    AllD[j1] = UnD(Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1])[ni:ni+nf,ni:ni+nf]
 
 for j1 in range(len(res2)):
-   print(res2[j1],j1)
    AllS[j1] = UnS(res2[j1][0],res2[j1][1])[ni:ni+nf,ni:ni+nf]
 
 

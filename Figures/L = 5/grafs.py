@@ -14,12 +14,14 @@ from scipy.interpolate import interp1d
 
 nf = 10
 
-list2 =  pickle.load( open( "list51.p", "rb" ) )
-list1 =  pickle.load( open( "list52.p", "rb" ) )
+list2 =  pickle.load( open( "list3.p", "rb" ) )
+list1 =  pickle.load( open( "list4.p", "rb" ) )
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
 
+list1[1] = list2[1]
+list1[2] = list2[2]
 
 eigenor= np.zeros((11,nf))
 eigennumor = np.zeros((11,nf))
@@ -42,9 +44,9 @@ plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(nf-1):
    plt.plot(FI1, eigenor[:,i],'r-')
-   plt.plot(FI1, eigennumor[:,i],'kX')
+   plt.plot(FI1, eigennumor[:,i],'ko',mfc='none')
 plt.plot(FI1, eigenor[:,nf-1],'r-', mfc='none',label='exact')
-plt.plot(FI1, eigennumor[:,nf-1],'kX', label='UCCSD')
+plt.plot(FI1, eigennumor[:,nf-1],'ko', mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
 plt.show()
@@ -53,9 +55,9 @@ plt.rc('axes', labelsize=15)
 plt.rc('font', size=15) 
 for i in range(nf-2):
    plt.plot(FI1, gap[:,i],'r-')
-   plt.plot(FI1, gapnum[:,i],'kX') 
+   plt.plot(FI1, gapnum[:,i],'ko',mfc='none') 
 plt.plot(FI1, gap[:,nf-2],'r-', mfc='none',label='exact')
-plt.plot(FI1, gapnum[:,nf-2],'kX', label='UCCSD')
+plt.plot(FI1, gapnum[:,nf-2],'ko',mfc='none', label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
 plt.show()
@@ -81,7 +83,7 @@ for i in range(11):
 
 print("Total error: ", errorT/11)
 
-plt.plot(FI1, error,'kX',label='error')
+plt.plot(FI1, error,'ko',mfc='none',label='error')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U/t$")
 plt.show()
