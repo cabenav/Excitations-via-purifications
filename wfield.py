@@ -259,8 +259,10 @@ seed=list(np.full(2*len(Doubles)+2*len(res2),0))
 for u in range(11):
    print("I am computing the energies for the coupling u: ", u)
    fun = function(weights,res2,Ham(Ham1,Ham2,u))
-   #seed = optimize.fmin(fun.evalua, seed,maxfun=100000,maxiter=100000,ftol=1e-2,xtol=1e-2)
-   seed = gradient_descent(fun.grad,seed,0.1,500,1e-03)
+   #seed = gradient_descent(fun.grad,seed,0.2,5,5e-03)
+   print(seed)
+   seed = optimize.fmin(fun.evalua, seed,maxfun=100000,maxiter=100000,ftol=1e-4,xtol=1e-4)
+   print(seed)
    vec=np.zeros(len(weights))
    vecaux=np.zeros(nf)
    for i in range(nf):
@@ -268,6 +270,7 @@ for u in range(11):
       vec[ni + i]=1
       eigennum[u,i] = np.matmul(np.matmul(vec,Unit(seed,res2,Ham(Ham1,Ham2,u))),vec)
    print(eigennum[u])
+   print(eigen[u])
    eigenor[u] = list(eigen.real[u])
    eigenor[u].sort() 
    eigennumor[u] = list(eigennum.real[u])
