@@ -12,30 +12,28 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 
-nf = 21
+nf = 15
 
-with open( "list7a.p", 'rb') as f:
-    u = pickle._Unpickler(f)
-    u.encoding = 'latin1'
-    l2 = u.load()
-
-with open( "list7b.p", 'rb') as f:
-    u = pickle._Unpickler(f)
-    u.encoding = 'latin1'
-    l1 = u.load()
-
-list1 = np.array(l1)
-list2 = np.array(l2)
-
-list1[2] = list2[2]
-list1[0] = list2[0]
+list2 =  pickle.load( open( "list1.p", "rb" ) )
+list1 =  pickle.load( open( "list5_2.p", "rb" ) )
+list3 =  pickle.load( open( "list5_5.p", "rb" ) )
+list4 =  pickle.load( open( "list5_10.p", "rb" ) )
+list5 =  pickle.load( open( "list5_15.p", "rb" ) )
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
 
+list1[0] = list2[0]
+list3[0] = list2[0]
+list4[0] = list2[0]
+list3[1] = list2[1]
+list4[1] = list2[1]
+list1[1] = list2[1]
 
 eigenor= np.zeros((11,nf))
 eigennumor = np.zeros((11,nf))
+eigennumor3 = np.zeros((11,nf))
+eigennumor4 = np.zeros((11,nf))
 gap = np.zeros((11,nf-1))
 gapnum = np.zeros((11,nf-1))
 
@@ -43,12 +41,11 @@ for u in range(11):
    eigenor[u] = list(list2.real[u])
    eigenor[u].sort() 
    eigennumor[u] = list(list1.real[u])
-   eigennumor[u].sort() 
-
-for i in range(5,11):
-   eigennumor[i][11] = eigenor[i][11]
-
-for u in range(11):
+   eigennumor3[u] = list(list3.real[u])
+   eigennumor4[u] = list(list4.real[u])
+   eigennumor[u].sort()  
+   eigennumor3[u].sort()  
+   eigennumor4[u].sort()  
    for j in range(5):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,1]
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][1]
@@ -56,17 +53,20 @@ for u in range(11):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,0]
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][0]
  
-
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(nf-1):
    plt.plot(FI1, eigenor[:,i],'r-')
    plt.plot(FI1, eigennumor[:,i],'ko',mfc='none')
+   plt.plot(FI1, eigennumor3[:,i],'bo',mfc='none')
+   plt.plot(FI1, eigennumor4[:,i],'go',mfc='none')
 plt.plot(FI1, eigenor[:,nf-1],'r-', mfc='none',label='exact')
-plt.plot(FI1, eigennumor[:,nf-1],'ko', mfc='none',label='UCCSD')
+plt.plot(FI1, eigennumor[:,nf-1],'ko', mfc='none',label='UCCSD2')
+plt.plot(FI1, eigennumor3[:,nf-1],'bo', mfc='none',label='UCCSD5')
+plt.plot(FI1, eigennumor4[:,nf-1],'go', mfc='none',label='UCCSD10')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 7")
+plt.title("L = 5")
 plt.show()
 
 plt.rc('axes', labelsize=15)
@@ -78,7 +78,7 @@ plt.plot(FI1, gap[:,nf-2],'r-', mfc='none',label='exact')
 plt.plot(FI1, gapnum[:,nf-2],'ko',mfc='none', label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 7")
+plt.title("L = 5")
 plt.show()
 
 def func(vec, vec1):

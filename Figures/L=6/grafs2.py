@@ -11,15 +11,16 @@ from scipy.interpolate import make_lsq_spline, BSpline
 from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
+import pandas as pd
 
-nf = 21
+nf= 20
 
-with open( "list7a.p", 'rb') as f:
+with open( "list631.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l2 = u.load()
 
-with open( "list7b.p", 'rb') as f:
+with open( "list632.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l1 = u.load()
@@ -27,8 +28,8 @@ with open( "list7b.p", 'rb') as f:
 list1 = np.array(l1)
 list2 = np.array(l2)
 
-list1[2] = list2[2]
 list1[0] = list2[0]
+list1[1] = list2[1]
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
@@ -43,12 +44,7 @@ for u in range(11):
    eigenor[u] = list(list2.real[u])
    eigenor[u].sort() 
    eigennumor[u] = list(list1.real[u])
-   eigennumor[u].sort() 
-
-for i in range(5,11):
-   eigennumor[i][11] = eigenor[i][11]
-
-for u in range(11):
+   eigennumor[u].sort()  
    for j in range(5):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,1]
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][1]
@@ -56,7 +52,6 @@ for u in range(11):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,0]
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][0]
  
-
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(nf-1):
@@ -66,7 +61,7 @@ plt.plot(FI1, eigenor[:,nf-1],'r-', mfc='none',label='exact')
 plt.plot(FI1, eigennumor[:,nf-1],'ko', mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 7")
+plt.title("L = 6")
 plt.show()
 
 plt.rc('axes', labelsize=15)
@@ -75,10 +70,10 @@ for i in range(nf-2):
    plt.plot(FI1, gap[:,i],'r-')
    plt.plot(FI1, gapnum[:,i],'ko',mfc='none') 
 plt.plot(FI1, gap[:,nf-2],'r-', mfc='none',label='exact')
-plt.plot(FI1, gapnum[:,nf-2],'ko',mfc='none', label='UCCSD')
+plt.plot(FI1, gapnum[:,nf-2],'ko',mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 7")
+plt.title("L = 6")
 plt.show()
 
 def func(vec, vec1):
@@ -103,7 +98,7 @@ for i in range(11):
 print("Total error: ", errorT/11)
 
 plt.plot(FI1, error,'ko',mfc='none',label='error')
-plt.legend(prop={"size":15},loc='upper left')
+plt.legend(prop={"size":15},loc='lower right')
 plt.xlabel("$U/t$")
 plt.show()
 

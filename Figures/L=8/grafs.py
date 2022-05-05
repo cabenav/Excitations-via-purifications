@@ -12,14 +12,14 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 
-nf = 21
+nf = 28
 
-with open( "list7a.p", 'rb') as f:
+with open( "list2.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l2 = u.load()
 
-with open( "list7b.p", 'rb') as f:
+with open( "list3.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l1 = u.load()
@@ -27,9 +27,10 @@ with open( "list7b.p", 'rb') as f:
 list1 = np.array(l1)
 list2 = np.array(l2)
 
-list1[2] = list2[2]
-list1[0] = list2[0]
+print(list1.shape,list2.shape)
 
+
+list1[2] = list2[2]
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
 
