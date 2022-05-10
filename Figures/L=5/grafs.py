@@ -14,14 +14,23 @@ from scipy.interpolate import interp1d
 
 nf = 10
 
-list2 =  pickle.load( open( "list3.p", "rb" ) )
-list1 =  pickle.load( open( "list4.p", "rb" ) )
+with open( "list5_3a.p", 'rb') as f:
+    u = pickle._Unpickler(f)
+    u.encoding = 'latin1'
+    list2 = u.load()
+
+with open( "list5_3b.p", 'rb') as f:
+    u = pickle._Unpickler(f)
+    u.encoding = 'latin1'
+    list1 = u.load()
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
 
+list1[0] = list2[0]
 list1[1] = list2[1]
 list1[2] = list2[2]
+list1[3] = list2[3]
 
 eigenor= np.zeros((11,nf))
 eigennumor = np.zeros((11,nf))

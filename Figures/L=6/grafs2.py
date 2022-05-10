@@ -15,12 +15,12 @@ import pandas as pd
 
 nf= 20
 
-with open( "list631.p", 'rb') as f:
+with open( "list6_3a.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l2 = u.load()
 
-with open( "list632.p", 'rb') as f:
+with open( "list6_3b.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l1 = u.load()
@@ -30,6 +30,11 @@ list2 = np.array(l2)
 
 list1[0] = list2[0]
 list1[1] = list2[1]
+list1[2] = list2[2]
+list1[3] = list2[3]
+list1[4] = list2[4]
+list1[5] = list2[5]
+list1[6] = list2[6]
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
@@ -52,6 +57,9 @@ for u in range(11):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,0]
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][0]
  
+eigennumor[7,13] = eigennumor[7,12]
+eigennumor[7,14] = eigennumor[7,15]
+
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 for i in range(nf-1):
