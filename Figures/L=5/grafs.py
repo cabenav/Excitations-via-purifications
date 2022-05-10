@@ -14,12 +14,12 @@ from scipy.interpolate import interp1d
 
 nf = 10
 
-with open( "list5_3a.p", 'rb') as f:
+with open( "list3.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     list2 = u.load()
 
-with open( "list5_3b.p", 'rb') as f:
+with open( "list4.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     list1 = u.load()
