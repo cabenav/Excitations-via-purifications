@@ -12,14 +12,14 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 
-nf = 28
+nf = 35
 
-with open( "list82a.p", 'rb') as f:
+with open( "list7_3a.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l2 = u.load()
 
-with open( "list82b.p", 'rb') as f:
+with open( "list7_3b.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l1 = u.load()
@@ -36,8 +36,6 @@ list1[2] = list2[2]
 list1[3] = list2[3]
 list1[4] = list2[4]
 list1[5] = list2[5]
-list1[6] = list2[6]
-list1[7] = list2[7]
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
@@ -71,14 +69,14 @@ na = 20
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-for i in range(nf-1):
+for i in range(na-1):
    plt.plot(FI1, eigenor[:,i],'r-')
    plt.plot(FI1, eigennumor[:,i],'ko',mfc='none')
-plt.plot(FI1, eigenor[:,nf-1],'r-', mfc='none',label='exact')
-plt.plot(FI1, eigennumor[:,nf-1],'ko', mfc='none',label='UCCSD')
+plt.plot(FI1, eigenor[:,na-1],'r-', mfc='none',label='exact')
+plt.plot(FI1, eigennumor[:,na-1],'ko', mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 8")
+plt.title("L = 7")
 plt.show()
 
 plt.rc('axes', labelsize=15)
@@ -90,7 +88,7 @@ plt.plot(FI1, gap[:,na-2],'r-', mfc='none',label='exact')
 plt.plot(FI1, gapnum[:,na-2],'ko',mfc='none', label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 8")
+plt.title("L = 7")
 plt.show()
 
 def func(vec, vec1):

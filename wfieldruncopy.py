@@ -15,6 +15,7 @@ from scipy.sparse import csr_matrix
 import numdifftools as nd
 import scipy.optimize as optimize
 import pickle
+from matplotlib import colors as mcolors
  
 #FUNCTIONS
 
@@ -81,9 +82,8 @@ trotter = int(input("Trotter (integer) steps: "))
 answer = input("Do you want to introduce the w-values (y/n): ")
 w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
 Num = int(input("Number of particles: "))
-ni = dimensionH(Num)
-nf = int(math.factorial(L)/(math.factorial(Num)*math.factorial(L-Num)))
-print(Num,ni,nf)
+ni = 0
+nf = 32
 
 if answer == "y":
    for i in range(L):
@@ -123,6 +123,7 @@ order= sum(vec,[])
 for j in range(2**L):
    res1[j] = res[order[j]]
 
+print(res1)
 
 #GENERATION OF THE ANHILITATION OPERATORS
 ##Op[0],Op[1]... are the anhilitation operators for sites 0,1,...
@@ -161,14 +162,41 @@ Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.m
 #Ham2S =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.multiply(np.multiply(np.multiply(csr_matrix.transpose(OpS[k1]), OpS[k2]),csr_matrix.transpose(OpS[k3])),OpS[k4])) for k1 in range(L) for k2 in range(L) for k3 in range(L) for k4 in range(L) for jj in range(L))
 
 
-
-eigen = [] 
+eigen = []
+eigen1 = []
+eigenor1 = np.zeros((11,5))
+wor1 = np.zeros(5)
+eigen2 = []
+eigenor2 = np.zeros((11,10))
+wor2 = np.zeros(10)
+eigen3 = []
+eigenor3 = np.zeros((11,10)) 
+wor3 = np.zeros(10)
+eigen4 = []
+eigenor4 = np.zeros((11,5)) 
+wor4 = np.zeros(5)
+eigen5 = []
+eigenor5 = np.zeros((11,1)) 
+wor5 = np.zeros(1)
 entan = []
 
+weights = vecf(w,res1)
+
+
 for u in range(11):
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[1:6,1:6])
+   eigen1.append(v1)
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[6:16,6:16])
+   eigen2.append(v1)
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[16:26,16:26])
+   eigen3.append(v1)
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[26:31,26:31])
+   eigen4.append(v1)
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[31:32,31:32])
+   eigen5.append(v1)
    v1, v2 = LA.eig(Ham(Ham1,Ham2,u))
    eigen.append(v1)
-   eigen[u] = eigen[u].real
+   eigen[u] = eigen[u].real 
    prov = []
    for s in range(len(v2[:,1])):
       prov.append(sum([abs(num)**4 for num in v2[:,s]]))
@@ -179,20 +207,46 @@ for u in range(11):
    for s in range(len(entan[u])):
       aa[s] = entan[u][ordering[s]]
    entan[u] = aa
-      
+  
 
 eigen = np.array(eigen)
+eigen1 = np.array(eigen1)
+eigen2 = np.array(eigen2)
+eigen3 = np.array(eigen3)
+eigen4 = np.array(eigen4)
+eigen5 = np.array(eigen5)
 entan = np.array(entan)
-print(eigen[:,0])
-print(eigen[:,1])
-print(eigen[:,2])
-print(eigen[:,3])
-print(eigen[:,4])
-print(eigen[:,5])
-print(eigen[:,6])
-print(eigen[:,7])
-print(eigen[:,8])
-print(eigen[:,9])
+weights = np.array(weights)
+
+wor1 = list(weights[1:6])
+wor1.sort(reverse = True)
+wor2 = list(weights[6:16])
+wor2.sort(reverse = True)
+wor3 = list(weights[16:26])
+wor3.sort(reverse = True)
+wor4 = list(weights[26:31])
+wor4.sort(reverse = True)
+wor5 = list(weights[31:32])
+wor5.sort(reverse = True)
+
+exact = np.zeros(11)
+
+for u in range(11):
+   eigenor1[u] = list(eigen1.real[u])
+   eigenor1[u].sort()
+   exact[u] +=np.dot(eigenor1[u],wor1) 
+   eigenor2[u] = list(eigen2.real[u])
+   eigenor2[u].sort()
+   exact[u] +=np.dot(eigenor2[u],wor2)
+   eigenor3[u] = list(eigen3.real[u])
+   eigenor3[u].sort() 
+   exact[u] +=np.dot(eigenor3[u],wor3)
+   eigenor4[u] = list(eigen4.real[u])
+   eigenor4[u].sort()
+   exact[u] +=np.dot(eigenor4[u],wor4)
+   eigenor5[u] = list(eigen5.real[u])
+   eigenor5[u].sort() 
+   exact[u] +=np.dot(eigenor5[u],wor5)  
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15) 
@@ -233,12 +287,6 @@ OpS = []
 for i in range(L+1):
    OpS.append(csr_matrix(Op[i]))
 
-#OpS[1].multiply(OpS[2])
-#print("Caca",np.multiply(OpS[1],OpS[4]))
-#print("Caca2")
-#print(csr_matrix(OpS[1].dot(Op[4])))
-#csr_matrix.transpose(OpS[1])
-#print(csr_matrix((OpS[1]**2).todense()))
 
 
 for j1 in range(len(Doubles)):
@@ -303,15 +351,20 @@ def gradient_descent(gradient, start, learn_rate, n_iter, tolerance):
       vector += diff
    return vector
 
-
-weights = vecf(w,res1)
 eigennum = np.zeros((11,nf))
 eigenor= np.zeros((11,nf))
 eigennumor = np.zeros((11,nf))
+eigennumor1 = np.zeros((11,5))
+eigennumor2 = np.zeros((11,10))
+eigennumor3 = np.zeros((11,10))
+eigennumor4 = np.zeros((11,5))
+eigennumor5 = np.zeros((11,1))
 gap = np.zeros(11)
 gapnum = np.zeros(11)
 gap2 = np.zeros(11)
 gapnum2 = np.zeros(11)
+output = np.zeros(11)
+output1 = np.zeros(11)
 
 seed=list(np.full(2*len(Doubles)+2*len(res2),0))
 Hamil=Ham(Ham1,Ham2,0)
@@ -321,7 +374,7 @@ for u in range(11):
    Hamil=Ham(Ham1,Ham2,u)
    fun = function(weights[ni:ni+nf],res2,Hamil)
    #seed = gradient_descent(fun.grad,seed,0.2,20,1e-02)
-   seed = optimize.fmin(fun.evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-5,xtol=1e-5)
+   seed,output1[u], itera, funcalls, warnflag = optimize.fmin(fun.evalua, seed,full_output=True,maxfun=200000,maxiter=200000,ftol=1e-2,xtol=1e-2)
    vec=np.zeros(nf)
    vecaux=np.zeros(nf)
    for i in range(nf):
@@ -329,36 +382,62 @@ for u in range(11):
       vec[i]=1
       eigennum[u,i] = np.matmul(np.matmul(vec,Unit(seed,res2,Hamil)),vec)
    eigenor[u] = list(eigen.real[u])
-   eigenor[u].sort() 
+   #eigennumor[u] = list(eigennum.real[u])
+   eigennumor1[u] = eigennum[u,1:6]
+   eigennumor1[u] = list(eigennumor1.real[u])
+   eigennumor1[u].sort()
+   output[u] +=np.dot(eigennumor1[u],wor1)
+   eigennumor2[u] = eigennum[u,6:16]
+   eigennumor2[u] = list(eigennumor2.real[u])
+   eigennumor2[u].sort()
+   output[u] +=np.dot(eigennumor2[u],wor2)
+   eigennumor3[u] = eigennum[u,16:26]
+   eigennumor3[u] = list(eigennumor3.real[u])
+   eigennumor3[u].sort()
+   output[u] +=np.dot(eigennumor3[u],wor3)
+   eigennumor4[u] = eigennum[u,26:31]
+   eigennumor4[u] = list(eigennumor4.real[u])
+   eigennumor4[u].sort()
+   output[u] +=np.dot(eigennumor4[u],wor4)
+   eigennumor5[u] = eigennum[u,31:32]
+   eigennumor5[u] = list(eigennumor5.real[u])
+   eigennumor5[u].sort()
+   output[u] +=np.dot(eigennumor5[u],wor5)
+   print(output[u],exact[u])
+   #eigenor[u].sort() 
    eigennumor[u] = list(eigennum.real[u])
-   eigennumor[u].sort()   
-   gap[u] = eigenor[u,1]-eigenor[u,0]
-   gapnum[u] = eigennumor[u][1]-eigennumor[u][0]
-   gap2[u] = eigenor[u,2]-eigenor[u,0]
-   gapnum2[u] = eigennumor[u][2]-eigennumor[u][0]
+   #eigennumor[u].sort()   
+   #gap[u] = eigenor[u,1]-eigenor[u,0]
+   #gapnum[u] = eigennumor[u][1]-eigennumor[u][0]
+   #gap2[u] = eigenor[u,2]-eigenor[u,0]
+   #gapnum2[u] = eigennumor[u][2]-eigennumor[u][0]
  
+
+#output =(-0.963,-0.587,-0.224, 0.108, 0.421,0.728,1.030,1.328,1.623,1.916,2.196)
+#exact=(-0.963,-0.587,-0.224,0.077,0.380,0.675,0.965,1.25,1.534,1.816,2.096)
+
+print(output)
+print(exact)
 
 pickle.dump(eigen, open( "list6_3a.p", "wb" ) )
 pickle.dump(eigennum, open( "list6_3b.p", "wb" ) )
 
-
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-for i in range(nf-1):
-   plt.plot(FI1, eigen[:,i],'bo', mfc='none')
-   plt.plot(FI1, eigennum[:,i],'r*')
-plt.plot(FI1, eigen[:,nf-1],'bo', mfc='none',label='exact')
-plt.plot(FI1, eigennum[:,nf-1],'r*', label='UCC')
+for i in range(9):
+   plt.plot(FI1, eigenor2[:,i],':', color='lightblue',mfc='none',markersize=2)
+   plt.plot(FI1, eigenor3[:,i],':', color='silver',mfc='none')
+#for i in range(nf):
+   #plt.plot(FI1, eigen[:,i],'bo', mfc='none')
+   #plt.plot(FI1, eigennum[:,i],'r*')
+plt.plot(FI1, eigenor2[:,0],'-',color='lightblue')
+plt.plot(FI1, eigenor3[:,0],'-',color='silver')
+plt.plot(FI1, eigenor2[:,9],'-', color='lightblue',label='N = 2')
+plt.plot(FI1, eigenor3[:,9],'-', color='silver',mfc='none',label='N = 3')
 plt.legend(prop={"size":15},loc='upper left')
-plt.xlabel("$U/t$")
-plt.show()
-
-plt.rc('axes', labelsize=15)
-plt.rc('font', size=15)  
-plt.plot(FI1, gap,'bo', mfc='none',label='exact')
-plt.plot(FI1, gapnum,'r*',label='UCC')
+plt.plot(FI1, exact,'o', color='blue',mfc='none',label='exact $\mathcal{E}(w)$',markersize=8)
+plt.plot(FI1, output,'r*',label='UCCSD',markersize=6)
 plt.legend(prop={"size":15},loc='upper left')
-plt.xlabel("$U/t$")
 plt.show()
 
 plt.rc('axes', labelsize=15)
