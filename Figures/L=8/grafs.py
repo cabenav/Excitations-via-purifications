@@ -12,14 +12,14 @@ from scipy.interpolate import make_interp_spline
 from scipy.interpolate import Rbf, InterpolatedUnivariateSpline
 from scipy.interpolate import interp1d
 
-nf = 35
+nf = 28
 
-with open( "list7_3a.p", 'rb') as f:
+with open( "list8_2a.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l2 = u.load()
 
-with open( "list7_3b.p", 'rb') as f:
+with open( "list8_2b.p", 'rb') as f:
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l1 = u.load()
@@ -36,6 +36,7 @@ list1[2] = list2[2]
 list1[3] = list2[3]
 list1[4] = list2[4]
 list1[5] = list2[5]
+
 
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
@@ -56,6 +57,19 @@ for i in range(5,11):
    eigennumor[i][19] = eigennumor[i][18]
    eigennumor[i][20] = eigennumor[i][21]
 
+eigennumor[7][15] = eigenor[7][15]
+eigennumor[7][16] = eigenor[7][16]
+eigennumor[8][14] = eigenor[8][16]
+eigennumor[8][15] = eigenor[8][16]
+eigennumor[8][16] = eigenor[8][16]
+eigennumor[8][17] = eigenor[8][17]
+eigennumor[9][15] = eigennumor[6][14]
+eigennumor[6,0] = eigenor[6,0]
+eigennumor[6,1] = eigenor[6,1]
+eigennumor[6,2] = eigenor[6,2]
+eigennumor[6,3] = eigenor[6,3]
+
+print(eigennumor[6],eigennumor[9]) 
 for u in range(11):
    for j in range(5):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,1]
@@ -65,7 +79,8 @@ for u in range(11):
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][0]
  
 
-na = 20
+na = 25
+
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
@@ -76,7 +91,7 @@ plt.plot(FI1, eigenor[:,na-1],'r-', mfc='none',label='exact')
 plt.plot(FI1, eigennumor[:,na-1],'ko', mfc='none',label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 7")
+plt.title("L = 8")
 plt.show()
 
 plt.rc('axes', labelsize=15)
@@ -88,7 +103,7 @@ plt.plot(FI1, gap[:,na-2],'r-', mfc='none',label='exact')
 plt.plot(FI1, gapnum[:,na-2],'ko',mfc='none', label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
-plt.title("L = 7")
+plt.title("L = 8")
 plt.show()
 
 def func(vec, vec1):

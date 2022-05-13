@@ -374,7 +374,7 @@ for u in range(11):
    Hamil=Ham(Ham1,Ham2,u)
    fun = function(weights[ni:ni+nf],res2,Hamil)
    #seed = gradient_descent(fun.grad,seed,0.2,20,1e-02)
-   seed,output1[u], itera, funcalls, warnflag = optimize.fmin(fun.evalua, seed,full_output=True,maxfun=200000,maxiter=200000,ftol=1e-2,xtol=1e-2)
+   seed,output1[u], itera, funcalls, warnflag = optimize.fmin(fun.evalua, seed,full_output=True,maxfun=200000,maxiter=200000,ftol=1e-4,xtol=1e-4)
    vec=np.zeros(nf)
    vecaux=np.zeros(nf)
    for i in range(nf):
@@ -404,9 +404,9 @@ for u in range(11):
    eigennumor5[u].sort()
    output[u] +=np.dot(eigennumor5[u],wor5)
    print(output[u],exact[u])
-   #eigenor[u].sort() 
+   eigenor[u].sort() 
    eigennumor[u] = list(eigennum.real[u])
-   #eigennumor[u].sort()   
+   eigennumor[u].sort()   
    #gap[u] = eigenor[u,1]-eigenor[u,0]
    #gapnum[u] = eigennumor[u][1]-eigennumor[u][0]
    #gap2[u] = eigenor[u,2]-eigenor[u,0]
@@ -424,17 +424,25 @@ pickle.dump(eigennum, open( "list6_3b.p", "wb" ) )
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-for i in range(9):
-   plt.plot(FI1, eigenor2[:,i],':', color='lightblue',mfc='none',markersize=2)
-   plt.plot(FI1, eigenor3[:,i],':', color='silver',mfc='none')
+for i in range(10):
+   plt.plot(FI1, eigenor2[:,i],'bo', mfc='none')
+   plt.plot(FI1, eigennumor2[:,i],'r*')
+plt.xlabel("$U/t$")
+plt.show()
+
+plt.rc('axes', labelsize=15)
+plt.rc('font', size=15)  
+#for i in range(9):
+#   plt.plot(FI1, eigenor2[:,i],':', color='lightblue',mfc='none',markersize=2)
+#   plt.plot(FI1, eigenor3[:,i],':', color='silver',mfc='none')
 #for i in range(nf):
    #plt.plot(FI1, eigen[:,i],'bo', mfc='none')
    #plt.plot(FI1, eigennum[:,i],'r*')
-plt.plot(FI1, eigenor2[:,0],'-',color='lightblue')
-plt.plot(FI1, eigenor3[:,0],'-',color='silver')
-plt.plot(FI1, eigenor2[:,9],'-', color='lightblue',label='N = 2')
-plt.plot(FI1, eigenor3[:,9],'-', color='silver',mfc='none',label='N = 3')
-plt.legend(prop={"size":15},loc='upper left')
+#plt.plot(FI1, eigenor2[:,0],'-',color='lightblue')
+#plt.plot(FI1, eigenor3[:,0],'-',color='silver')
+#plt.plot(FI1, eigenor2[:,9],'-', color='lightblue',label='N = 2')
+#plt.plot(FI1, eigenor3[:,9],'-', color='silver',mfc='none',label='N = 3')
+#plt.legend(prop={"size":15},loc='upper left')
 plt.plot(FI1, exact,'o', color='blue',mfc='none',label='exact $\mathcal{E}(w)$',markersize=8)
 plt.plot(FI1, output,'r*',label='UCCSD',markersize=6)
 plt.legend(prop={"size":15},loc='upper left')
