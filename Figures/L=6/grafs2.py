@@ -15,7 +15,7 @@ import pandas as pd
 
 nf= 20
 
-with open( "list6_3a.p", 'rb') as f:
+with open( "list6_3a.p", 'rb') as f: 
     u = pickle._Unpickler(f)
     u.encoding = 'latin1'
     l2 = u.load()
