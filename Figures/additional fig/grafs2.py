@@ -84,6 +84,7 @@ plt.plot(FI1, Energies[2],'k+',mfc='none', label='n=2')
 plt.plot(FI1, Energies[3],'b*',mfc='none', label='n=5')
 plt.plot(FI1, Energies[4],'bo',mfc='none', label='n=10')
 plt.plot(FI1, Energies[5],'b+',mfc='none', label='n=20')
+plt.legend(prop={"size":15},loc='upper left')
 plt.ylabel("Errors")
 plt.show()
 
