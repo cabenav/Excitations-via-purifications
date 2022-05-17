@@ -218,6 +218,7 @@ eigen5 = np.array(eigen5)
 entan = np.array(entan)
 weights = np.array(weights)
 
+
 wor1 = list(weights[1:6])
 wor1.sort(reverse = True)
 wor2 = list(weights[6:16])

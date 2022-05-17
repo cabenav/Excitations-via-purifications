@@ -330,8 +330,8 @@ for u in range(11):
    gapnum2[u] = eigennumor[u][2]-eigennumor[u][0]
  
 
-pickle.dump(eigen, open( "list6_3a.p", "wb" ) )
-pickle.dump(eigennum, open( "list6_3b.p", "wb" ) )
+pickle.dump(eigen, open( "list1.p", "wb" ) )
+pickle.dump(eigennum, open( "list2.p", "wb" ) )
 
 
 plt.rc('axes', labelsize=15)
