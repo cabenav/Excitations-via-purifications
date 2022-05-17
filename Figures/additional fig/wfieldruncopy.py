@@ -164,10 +164,10 @@ Ham2 =sum(np.multiply(expf((k1-k2+k3-k4)*jj,L)*expf(k3-k4,L)/L**2,np.matmul(np.m
 
 eigen = []
 eigen1 = []
-eigenor1 = np.zeros((11,5))
+eigenor1 = np.zeros((11,8))
 wor1 = np.zeros(5)
 eigen2 = []
-eigenor2 = np.zeros((11,10))
+eigenor2 = np.zeros((11,28))
 wor2 = np.zeros(10)
 eigen3 = []
 eigenor3 = np.zeros((11,10)) 
@@ -184,9 +184,9 @@ weights = vecf(w,res1)
 
 
 for u in range(11):
-   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[1:6,1:6])
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[1:9,1:9])
    eigen1.append(v1)
-   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[6:16,6:16])
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[9:37,9:37])
    eigen2.append(v1)
    v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[16:26,16:26])
    eigen3.append(v1)
@@ -194,7 +194,7 @@ for u in range(11):
    eigen4.append(v1)
    v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[31:32,31:32])
    eigen5.append(v1)
-   v1, v2 = LA.eig(Ham(Ham1,Ham2,u))
+   v1, v2 = LA.eig(Ham(Ham1,Ham2,u)[9:37,9:37])
    eigen.append(v1)
    eigen[u] = eigen[u].real 
    prov = []
@@ -255,17 +255,17 @@ plt.plot(eigen[1:11,1], entan[1:11,1],'bo',mfc='none',label='1s')
 plt.plot(eigen[1:11,2], entan[1:11,2],'ro',label='2s') 
 plt.plot(eigen[1:11,3], entan[1:11,3],'ro',mfc='none',label='3s')
 plt.plot(eigen[1:11,4], entan[1:11,4],'ko', label='4s')
-plt.plot(eigen[1:11,5], entan[1:11,5],'ko',mfc='none',label='4s')
-plt.plot(eigen[1:11,6], entan[1:11,6],'go',label='5s')
-plt.plot(eigen[1:11,7], entan[1:11,7],'go', mfc='none',label='6s')
-plt.plot(eigen[1:11,8], entan[1:11,8],'yo',label='7s')
-plt.plot(eigen[1:11,9], entan[1:11,9],'yo', mfc='none',label='8s')
-#plt.plot(eigen[1:11,10], entan[1:11,10],'b+',label='8s')
-#plt.plot(eigen[1:11,11], entan[1:11,11],'b*', mfc='none',label='10s') 
-#plt.plot(eigen[1:11,12], entan[1:11,12],'r+',label='11s')
-#plt.plot(eigen[1:11,13], entan[1:11,13],'r*', mfc='none',label='12s')  
-#plt.legend(prop={"size":15},loc='center right')
-plt.xlabel("$Energy$")
+plt.plot(eigen[1:11,5], entan[1:11,5],'ko',mfc='none',label='5s')
+plt.plot(eigen[1:11,6], entan[1:11,6],'go',label='6s')
+plt.plot(eigen[1:11,7], entan[1:11,7],'go', mfc='none',label='7s')
+plt.plot(eigen[1:11,8], entan[1:11,8],'yo',label='8s')
+plt.plot(eigen[1:11,9], entan[1:11,9],'yo', mfc='none',label='9s')
+plt.plot(eigen[1:11,10], entan[1:11,10],'b+',label='10s')
+plt.plot(eigen[1:11,11], entan[1:11,11],'b*', mfc='none',label='11s') 
+plt.plot(eigen[1:11,12], entan[1:11,12],'r+',label='12s')
+plt.plot(eigen[1:11,13], entan[1:11,13],'r*', mfc='none',label='13s')  
+plt.legend(prop={"size":15},loc='center right')
+plt.xlabel("Energy")
 plt.ylabel("PR")
 plt.title("L = 8")
 plt.show()
