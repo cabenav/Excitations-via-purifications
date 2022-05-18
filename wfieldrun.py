@@ -313,7 +313,7 @@ for u in range(11):
    Hamil=Ham(Ham1,Ham2,u)
    fun = function(weights[ni:ni+nf],res2,Hamil)
    #seed = gradient_descent(fun.grad,seed,0.2,20,1e-02)
-   seed = optimize.fmin(fun.evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-2,xtol=1e-2)
+   seed = optimize.fmin(fun.evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-4,xtol=1e-4)
    vec=np.zeros(nf)
    vecaux=np.zeros(nf)
    for i in range(nf):
@@ -330,8 +330,8 @@ for u in range(11):
    gapnum2[u] = eigennumor[u][2]-eigennumor[u][0]
  
 
-pickle.dump(eigen, open( "list1.p", "wb" ) )
-pickle.dump(eigennum, open( "list2.p", "wb" ) )
+pickle.dump(eigen, open( "list3.p", "wb" ) )
+pickle.dump(eigennum, open( "list4.p", "wb" ) )
 
 
 plt.rc('axes', labelsize=15)

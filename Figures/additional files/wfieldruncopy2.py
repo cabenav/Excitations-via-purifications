@@ -78,7 +78,7 @@ class function():
 
 #NUMBER OF SITES, WEIGHTS and TROTTER STEPS:
 L = 5
-trotter = 2
+trotter = 10
 w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
 Num = 2
 ni = 0
@@ -193,13 +193,110 @@ eigen3 = np.array(eigen3)
 eigen4 = np.array(eigen4)
 eigen5 = np.array(eigen5)
 
-w[2] = 0.2
-exact = np.zeros(20)
-u = 5
 
-print(w)
-for ss in range(20):
-   w[2] += 0.01
+#CONSTRUCTION OF UNITARIES
+
+#Generation of all Doubles Excitations
+test_list = np.arange(0, L, 1).tolist()
+res2 = list(combinations(test_list,2))
+Doubles = []
+for j1 in range(len(res2)):
+   for k1 in range(j1+1,len(res2)):
+      if(common_member(res2[j1],res2[k1])==False):
+         #print(res2[j1],res2[k1],common_member(res2[j1],res2[k1]),j1,k1)
+         Doubles.append((res2[j1],res2[k1]))
+
+AllD = np.zeros((len(Doubles),nf,nf))
+AllS = np.zeros((len(res),nf,nf))
+#AllDsparse = []
+#AllSsparse = []
+
+OpS = []
+for i in range(L+1):
+   OpS.append(csr_matrix(Op[i]))
+
+#OpS[1].multiply(OpS[2])
+#print("Caca",np.multiply(OpS[1],OpS[4]))
+#print("Caca2")
+#print(csr_matrix(OpS[1].dot(Op[4])))
+#csr_matrix.transpose(OpS[1])
+#print(csr_matrix((OpS[1]**2).todense()))
+
+
+for j1 in range(len(Doubles)):
+   AllD[j1] = UnD(Doubles[j1][0][0],Doubles[j1][0][1],Doubles[j1][1][0],Doubles[j1][1][1])[ni:ni+nf,ni:ni+nf]
+   #AllDsparse.append(csr_matrix(AllD[j1]))
+
+for j1 in range(len(res2)):
+   AllS[j1] = UnS(res2[j1][0],res2[j1][1])[ni:ni+nf,ni:ni+nf]
+   #AllSsparse.append(csr_matrix(AllS[j1]))
+
+
+FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
+FI1 = np.array(FI1)
+
+
+#QUANTUM ALGORITHM: here starts the quantum calculation
+
+#Generation of all Doubles Excitations
+test_list = np.arange(0, L, 1).tolist()
+res2 = list(combinations(test_list,2))
+Doubles = []
+for j1 in range(len(res2)):
+   for k1 in range(j1+1,len(res2)):
+      if(common_member(res2[j1],res2[k1])==False):
+         #print(res2[j1],res2[k1],common_member(res2[j1],res2[k1]),j1,k1)
+         Doubles.append((res2[j1],res2[k1]))
+
+def Unit(params,res2,Hamil):
+   x = params
+   Full = np.identity(nf)
+   Full1 = np.identity(nf)
+   FullS = np.identity(nf)
+   Full1S = np.identity(nf)
+   for j1 in range(len(Doubles)):
+      Full = np.matmul(Unitary(x[j1],AllD[j1]),Full)
+      Full1 = np.matmul(Full1, Unitary(-x[j1],AllD[j1]))
+   for j1 in range(len(Doubles),2*len(Doubles)):
+      j11 =  j1-len(Doubles)
+      Full = np.matmul(Unitary(x[j1],AllD[j11]),Full)
+      Full1 = np.matmul(Full1, Unitary(-x[j1],AllD[j11]))
+   for j1 in range(2*len(Doubles),2*len(Doubles)+len(res2)):
+      j11 = j1-2*len(Doubles)
+      FullS = np.matmul(Unitary(x[j1],AllS[j11]),FullS)
+      Full1S = np.matmul(Full1S, Unitary(-x[j1],AllS[j11]))
+   for j1 in range(2*len(Doubles)+len(res2),2*len(Doubles)+2*len(res2)):
+      j11 = j1-2*len(Doubles)-len(res2)
+      FullS = np.matmul(Unitary(x[j1],AllS[j11]),FullS)
+      Full1S = np.matmul(Full1S, Unitary(-x[j1],AllS[j11]))
+   Full = np.matmul(LA.matrix_power(FullS,trotter),np.matmul(LA.matrix_power(Full, trotter),FullS))
+   Full1 = np.matmul(np.matmul(Full1S,LA.matrix_power(Full1, trotter)),LA.matrix_power(Full1S,trotter))
+   #Full = np.matmul(LA.matrix_power(np.matmul(FullS,Full),trotter),FullS)
+   #Full1 = np.matmul(Full1S,LA.matrix_power(np.matmul(Full1,Full1S),trotter))
+   return np.matmul(np.matmul(Full1,Hamil),Full)
+
+
+seed=list(np.full(2*len(Doubles)+2*len(res2),0))
+eigennum = np.zeros((11,nf))
+eigennumor = np.zeros((11,nf))
+eigennumor1 = np.zeros((11,5))
+eigennumor2 = np.zeros((11,10))
+eigennumor3 = np.zeros((11,10))
+eigennumor4 = np.zeros((11,5))
+eigennumor5 = np.zeros((11,1))
+eigenor= np.zeros((11,nf))
+
+w[2] = 0.2
+exact = np.zeros(11)
+u = 4
+output = np.zeros(11)
+weights = vecf(w,res1)
+weights = np.array(weights)
+Hamil=Ham(Ham1,Ham2,u) 
+fun = function(weights[ni:ni+nf],res2,Hamil)
+seed = optimize.fmin(fun.evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-2,xtol=1e-2)
+
+for ss in range(11):
    print(w)
    weights = vecf(w,res1)
    weights = np.array(weights)
@@ -227,18 +324,62 @@ for ss in range(20):
    exact[ss] +=np.dot(eigenor4[u],wor4)
    eigenor5[u] = list(eigen5.real[u])
    eigenor5[u].sort() 
-   exact[ss] +=np.dot(eigenor5[u],wor5)  
+   exact[ss] +=np.dot(eigenor5[u],wor5) 
+   Hamil=Ham(Ham1,Ham2,u) 
+   fun = function(weights[ni:ni+nf],res2,Hamil)
+   seed = optimize.fmin(fun.evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-2,xtol=1e-2)
+   vec=np.zeros(nf)
+   vecaux=np.zeros(nf)
+   for i in range(nf):
+      vec=np.zeros(nf)
+      vec[i]=1
+      eigennum[u,i] = np.matmul(np.matmul(vec,Unit(seed,res2,Hamil)),vec)
+   eigenor[u] = list(eigen.real[u])
+   #eigennumor[u] = list(eigennum.real[u])
+   eigennumor1[u] = eigennum[u,1:6]
+   eigennumor1[u] = list(eigennumor1.real[u])
+   eigennumor1[u].sort()
+   output[ss] +=np.dot(eigennumor1[u],wor1)
+   eigennumor2[u] = eigennum[u,6:16]
+   eigennumor2[u] = list(eigennumor2.real[u])
+   eigennumor2[u].sort()
+   output[ss] +=np.dot(eigennumor2[u],wor2)
+   eigennumor3[u] = eigennum[u,16:26]
+   eigennumor3[u] = list(eigennumor3.real[u])
+   eigennumor3[u].sort()
+   output[ss] +=np.dot(eigennumor3[u],wor3)
+   eigennumor4[u] = eigennum[u,26:31]
+   eigennumor4[u] = list(eigennumor4.real[u])
+   eigennumor4[u].sort()
+   output[ss] +=np.dot(eigennumor4[u],wor4)
+   eigennumor5[u] = eigennum[u,31:32]
+   eigennumor5[u] = list(eigennumor5.real[u])
+   eigennumor5[u].sort()
+   output[ss] +=np.dot(eigennumor5[u],wor5)
+   print(output[ss],exact[ss])
+   w[2] += 0.02
 
 
-
-FI1 =w = list(np.arange(0.2,0.4,0.01))
+FI1 =w = list(np.arange(0.2,0.4+0.01,0.02))
 FI1 = np.array(FI1)
-print(FI1)
 
+#with open( "exact", 'rb') as f:
+#    u = pickle._Unpickler(f)
+#    u.encoding = 'latin1'
+#    exact = u.load()
+
+#with open( "output", 'rb') as f:
+#    u = pickle._Unpickler(f)
+#    u.encoding = 'latin1'
+#    output = u.load()
+
+pickle.dump(exact, open( "exact", "wb" ) )
+pickle.dump(output, open( "output", "wb" ) )
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-plt.plot(FI1, exact,'r-', color='blue',mfc='none',label='exact $\mathcal{E}(w)$',markersize=8)
+plt.plot(FI1, exact,'r-', mfc='none',label='exact',markersize=8)
+plt.plot(FI1, output,'ko', mfc='none',label='UCCSD',markersize=8)
 plt.legend(prop={"size":15},loc='upper left')
 plt.show()
 
