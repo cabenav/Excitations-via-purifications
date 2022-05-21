@@ -77,12 +77,12 @@ class function():
     
 
 #NUMBER OF SITES, WEIGHTS and TROTTER STEPS:
-L = 5
+L = 6
 trotter = 10
 w = list(np.arange(0.5/L,0.5+0.01,0.5/L)) 
 Num = 2
 ni = 0
-nf = 32
+nf = 64
 
 #GENERATION OF THE HILBERT (FOCK) SPACE
 ## This generates the Hilbert space {|000>,|001>,...} but in a non-organized way
@@ -287,16 +287,16 @@ eigennumor5 = np.zeros((11,1))
 eigenor= np.zeros((11,nf))
 
 w[2] = 0.2
-exact = np.zeros(11)
+exact = np.zeros(7)
 u = 4
-output = np.zeros(11)
+output = np.zeros(7)
 weights = vecf(w,res1)
 weights = np.array(weights)
 Hamil=Ham(Ham1,Ham2,u) 
 fun = function(weights[ni:ni+nf],res2,Hamil)
 seed = optimize.fmin(fun.evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-2,xtol=1e-2)
 
-for ss in range(11):
+for ss in range(7):
    print(w)
    weights = vecf(w,res1)
    weights = np.array(weights)
@@ -360,26 +360,28 @@ for ss in range(11):
    w[2] += 0.02
 
 
-FI1 =w = list(np.arange(0.2,0.4+0.01,0.02))
+FI1 =w = list(np.arange(0.2,0.33,0.01))
 FI1 = np.array(FI1)
 
-#with open( "exact", 'rb') as f:
-#    u = pickle._Unpickler(f)
-#    u.encoding = 'latin1'
-#    exact = u.load()
+with open( "exact2", 'rb') as f:
+    u = pickle._Unpickler(f)
+    u.encoding = 'latin1'
+    exact = u.load()
 
-#with open( "output", 'rb') as f:
-#    u = pickle._Unpickler(f)
-#    u.encoding = 'latin1'
-#    output = u.load()
+with open( "output2", 'rb') as f:
+    u = pickle._Unpickler(f)
+    u.encoding = 'latin1'
+    output = u.load()
 
-pickle.dump(exact, open( "exact", "wb" ) )
-pickle.dump(output, open( "output", "wb" ) )
+print(output,exact)
+#pickle.dump(exact, open( "exact", "wb" ) )
+#pickle.dump(output, open( "output", "wb" ) )
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 plt.plot(FI1, exact,'r-', mfc='none',label='exact',markersize=8)
 plt.plot(FI1, output,'ko', mfc='none',label='UCCSD',markersize=8)
+plt.plot(FI1, output,'k-', mfc='none',markersize=8)
 plt.legend(prop={"size":15},loc='upper left')
 plt.show()
 
