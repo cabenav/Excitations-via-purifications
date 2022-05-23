@@ -64,6 +64,7 @@ plt.plot(FI1, Energies[4],'bo',mfc='none', label='n=10')
 plt.legend(prop={"size":15},loc='upper left')
 plt.ylabel("Energies")
 plt.title("L = 5")
+plt.xlabel("$U$")
 plt.show()
 
 Energies[3][10] = Energies[4][10]
@@ -81,6 +82,10 @@ plt.rc('font', size=15)
 plt.plot(FI1, Energies[1],'ko', mfc='none',label='n=1')
 plt.plot(FI1, Energies[2],'k+',mfc='none', label='n=2')
 plt.plot(FI1, Energies[3],'b*',mfc='none', label='n=5')
+plt.plot(FI1, Energies[4],'bo',mfc='none', label='n=10')
+plt.legend(prop={"size":15},loc='upper left')
+plt.xlabel("$U$")
+plt.title("L = 5")
 plt.ylabel("Errors")
 plt.show()
 
