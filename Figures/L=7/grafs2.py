@@ -58,12 +58,12 @@ list3[5] = list2[5]
 FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
 FI1 = np.array(FI1)
 
-print(list3)
 eigenor= np.zeros((11,nf))
 eigennumor = np.zeros((11,nf))
 eigennumor2 = np.zeros((11,nf))
 gap = np.zeros((11,nf-1))
 gapnum = np.zeros((11,nf-1))
+gapnum2 = np.zeros((11,nf-1))
 
 
 for u in range(11):
@@ -84,9 +84,11 @@ for u in range(11):
    for j in range(5):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,1]
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][1]
+      gapnum2[u,j] = eigennumor[u][j+1]-eigennumor[u][0]
    for j in range(5,nf-1):
       gap[u,j] = eigenor[u,j+1]-eigenor[u,0]
       gapnum[u,j] = eigennumor[u][j+1]-eigennumor[u][0]
+      gapnum2[u,j] = eigennumor[u][j+1]-eigennumor[u][0]
  
 
 na = 20
@@ -105,6 +107,8 @@ for i in range(6,11):
    eigennumor2[i,19] = eigenor[i,19]
    eigennumor2[i,18] = eigenor[i,18]
 
+print(eigennumor[:,1])
+print(eigennumor2[:,1])
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
@@ -125,9 +129,10 @@ plt.rc('font', size=15)
 for i in range(na-2):
    plt.plot(FI1, gap[:,i],'r-')
    plt.plot(FI1, gapnum[:,i],'ko',mfc='none') 
+   plt.plot(FI1, gapnum2[:,i],'bx',mfc='none') 
 plt.plot(FI1, gap[:,na-2],'r-', mfc='none',label='exact')
 plt.plot(FI1, gapnum[:,na-2],'ko',mfc='none', label='UCCSD')
-plt.plot(FI1, gapnum[:,na-2],'ko',mfc='none', label='UCCSD')
+plt.plot(FI1, gapnum2[:,na-2],'bx',mfc='none', label='UCCSD')
 plt.legend(prop={"size":15},loc='upper left')
 plt.xlabel("$U$")
 plt.title("L = 7")
