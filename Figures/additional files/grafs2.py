@@ -41,7 +41,7 @@ FI1 = np.array(FI1)
 Energies = [[-0.92405705,-0.57272512,-0.2065959,0.12279264,0.43598219,0.73812978,1.03374658,1.31174677,1.59962867,1.88738817,2.17367119],
 [-0.86983235,-0.57638586,-0.21299124,0.12258634,0.43601326,  0.73909269,1.03756871,1.33194044,1.62345655,1.91282727,2.20079337],
 [-0.93143546,-0.57979587,-0.22417352,0.10811932,0.42122094,  0.72841559,1.03082219,  1.32882719,  1.62391515,  1.91609649,  2.20651209],[-0.94098103, -0.571175,   -0.23604188,  0.09330819,  0.40702377,  0.70455399,1.00234736,  1.29597855,  1.58747221,  1.87834978,  2.14811866],[-0.93637405, -0.56929364, -0.23307049,  0.09533294,  0.40270606,  0.70476568,1.00186343,  1.3025229,  1.59272985,  1.88029832,  2.16790576],[-0.9332802,  -0.57103082, -0.23948335,  0.08876872,  0.40165722,  0.70579147,
-  1.00572011,  1.301889,    1.59570221 , 1.88717199 , 2.17692792],[-0.96379719, -0.58783448, -0.24486551,  0.07706183,  0.38058344,  0.67551824,0.9651096,   1.2510723,   1.53449944,  1.81607022,  2.09629974]]
+  1.00572011,  1.301889,    1.59570221 , 1.88717199 , 2.17692792],[-0.96379719, -0.58783448, -0.24486551,  0.07706183,  0.38058344,  0.67551824,0.9651096,   1.2510723,   1.53449944,  1.81607022,  2.09629974],[-0.8833312,-0.57971368,-0.2240458,0.11476589,  0.43147877,  0.7334805,1.02446857,  1.32097594 , 1.62011153 , 1.90903546 , 2.19548789]]
 
 Ene = np.array(Energies)
 
@@ -53,16 +53,18 @@ for j in range(2):
    Energies[3][j] = Energies[6][j]
    Energies[4][j] = Energies[6][j]
    Energies[5][j] = Energies[6][j]
+   Energies[7][j] = Energies[6][j]
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
 plt.plot(FI1, Energies[6],'r-', mfc='none',label='exact')
-plt.plot(FI1, Energies[1],'ko', mfc='none',label='n=1')
-plt.plot(FI1, Energies[2],'k+',mfc='none', label='n=2')
-plt.plot(FI1, Energies[3],'b*',mfc='none', label='n=5')
-plt.plot(FI1, Energies[4],'bo',mfc='none', label='n=10')
-plt.plot(FI1, Energies[5],'b+',mfc='none', label='n=20')
+plt.plot(FI1, Energies[1],'ko', mfc='none',label='$n=1$')
+plt.plot(FI1, Energies[2],'k+',mfc='none', label='$n=2$')
+plt.plot(FI1, Energies[3],'kx',mfc='none', label='$n=4$')
+plt.plot(FI1, Energies[4],'b*',mfc='none', label='$n=5$')
+plt.plot(FI1, Energies[5],'bo',mfc='none', label='$n=10$')
 plt.legend(prop={"size":15},loc='upper left')
+plt.xlabel("$U$")
 plt.ylabel("Energies")
 plt.title("L = 5")
 plt.show()
@@ -76,15 +78,18 @@ for j in range(11):
    Energies[3][j] = (Energies[3][j]-Energies[6][j])
    Energies[4][j] = (Energies[4][j]-Energies[6][j])
    Energies[5][j] = (Energies[5][j]-Energies[6][j])
+   Energies[7][j] = (Energies[7][j]-Energies[6][j])
 
 plt.rc('axes', labelsize=15)
 plt.rc('font', size=15)  
-plt.plot(FI1, Energies[1],'ko', mfc='none',label='n=1')
-plt.plot(FI1, Energies[2],'k+',mfc='none', label='n=2')
-plt.plot(FI1, Energies[3],'b*',mfc='none', label='n=5')
-plt.plot(FI1, Energies[4],'bo',mfc='none', label='n=10')
-plt.plot(FI1, Energies[5],'b+',mfc='none', label='n=20')
+plt.plot(FI1, Energies[1],'ko', mfc='none',label='$n=1$')
+plt.plot(FI1, Energies[2],'k+',mfc='none', label='$n=2$')
+plt.plot(FI1, Energies[3],'b*',mfc='none', label='$n=4$')
+plt.plot(FI1, Energies[4],'bo',mfc='none', label='$n=5$')
+plt.plot(FI1, Energies[5],'b+',mfc='none', label='$n=10$')
 plt.legend(prop={"size":15},loc='upper left')
+plt.xlabel("$U$")
+plt.title("L = 5")
 plt.ylabel("Errors")
 plt.show()
 
