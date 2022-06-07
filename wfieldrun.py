@@ -184,23 +184,42 @@ for u in range(11):
 eigen = np.array(eigen)
 entan = np.array(entan)
 
-plt.rc('axes', labelsize=15)
-plt.rc('font', size=15) 
-plt.plot(eigen[3:11,0], entan[3:11,0],'bo',label='gs')
-plt.plot(eigen[3:11,1], entan[3:11,1],'bo',mfc='none',label='1s') 
-plt.plot(eigen[3:11,2], entan[3:11,2],'ro',mfc='none',label='2s')
-plt.plot(eigen[3:11,3], entan[3:11,3],'ko', label='3s')
-plt.plot(eigen[3:11,4], entan[3:11,4],'ko',mfc='none',label='4s')
-plt.plot(eigen[3:11,5], entan[3:11,5],'go', mfc='none',label='5s')
-plt.plot(eigen[3:11,6], entan[3:11,6],'go',label='6s')
-plt.plot(eigen[3:11,7], entan[3:11,7],'yo', mfc='none',label='7s')
-plt.plot(eigen[3:11,8], entan[3:11,8],'b+',label='8s')
-plt.plot(eigen[3:11,9], entan[3:11,9],'b*', mfc='none',label='9s')  
-plt.legend(prop={"size":15},loc='center right')
-plt.xlabel("$U$")
-plt.title("L = 5")
-plt.show()
+#plt.rc('axes', labelsize=15)
+#plt.rc('font', size=15) 
+#plt.plot(eigen[3:11,0], entan[3:11,0],'bo',label='gs')
+#plt.plot(eigen[3:11,1], entan[3:11,1],'bo',mfc='none',label='1s') 
+#plt.plot(eigen[3:11,2], entan[3:11,2],'ro',mfc='none',label='2s')
+#plt.plot(eigen[3:11,3], entan[3:11,3],'ko', label='3s')
+#plt.plot(eigen[3:11,4], entan[3:11,4],'ko',mfc='none',label='4s')
+#plt.plot(eigen[3:11,5], entan[3:11,5],'go', mfc='none',label='5s')
+#plt.plot(eigen[3:11,6], entan[3:11,6],'go',label='6s')
+#plt.plot(eigen[3:11,7], entan[3:11,7],'yo', mfc='none',label='7s')
+#plt.plot(eigen[3:11,8], entan[3:11,8],'b+',label='8s')
+#plt.plot(eigen[3:11,9], entan[3:11,9],'b*', mfc='none',label='9s')  
+#plt.legend(prop={"size":15},loc='center right')
+#plt.xlabel("$U$")
+#plt.title("L = 5")
+#plt.show()
 
+
+FI1 =[0,1,2,3,4,5, 6, 7, 8, 9,10]
+xnew = np.linspace(0, 10, 300) 
+FI1 = np.array(FI1)
+
+plt.rc('axes', labelsize=15)
+plt.rc('font', size=15)  
+for i in range(1,nf-1):
+   spl = make_interp_spline(FI1, eigen[:,i], k=3)
+   powersmooth = spl(xnew)
+   plt.plot(xnew,powersmooth,'k-', mfc='none')
+   #plt.plot(FI1, eigen[:,i],'r-', mfc='none')
+spl = make_interp_spline(FI1, eigen[:,nf-1], k=3)
+powersmooth = spl(xnew)
+plt.plot(xnew,powersmooth,'k-', mfc='none')
+spl = make_interp_spline(FI1, eigen[:,0], k=3)
+powersmooth = spl(xnew)
+plt.plot(xnew,powersmooth,'r-', mfc='none',lw=4)
+plt.show()
 
 #CONSTRUCTION OF UNITARIES
 
@@ -222,13 +241,6 @@ AllS = np.zeros((len(res),nf,nf))
 OpS = []
 for i in range(L+1):
    OpS.append(csr_matrix(Op[i]))
-
-#OpS[1].multiply(OpS[2])
-#print("Caca",np.multiply(OpS[1],OpS[4]))
-#print("Caca2")
-#print(csr_matrix(OpS[1].dot(Op[4])))
-#csr_matrix.transpose(OpS[1])
-#print(csr_matrix((OpS[1]**2).todense()))
 
 
 for j1 in range(len(Doubles)):
