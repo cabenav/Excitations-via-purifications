@@ -79,8 +79,7 @@ def energies(vec,FullH):
    E2n = np.asarray(cost2)[0][0].real
    E3n = np.asarray(cost3)[0][0].real
    E4n = np.asarray(cost4)[0][0].real
-   energ = [E1n,E2n,E3n,E4n]
-   return energ
+   return [E1n,E2n,E3n,E4n]
 
 class functioncost():
    def __init__(self, Hamilt,w1,w2):
@@ -106,7 +105,7 @@ print("Exact energies: ", w.real) #Eigenvalues
 
 #VARIATIONAL CALCULATION OF THE ENERGIES
 seed=list(np.full(15,0))
-seed = optimize.fmin(functioncost(Full,0.7,0.9).evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-12,xtol=1e-12)
+seed = optimize.fmin(functioncost(Full,0.7,0.9).evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-15,xtol=1e-15)
 print("Calculated energies: ", energies(seed,Full))
 
 
