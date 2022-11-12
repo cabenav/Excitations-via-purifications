@@ -105,7 +105,7 @@ print("Exact energies: ", w.real) #Eigenvalues
 
 #VARIATIONAL CALCULATION OF THE ENERGIES
 seed=list(np.full(15,0))
-seed = optimize.fmin(functioncost(Full,0.7,0.9).evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-15,xtol=1e-15)
+seed = optimize.fmin(functioncost(Full,0.7,0.9).evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-20,xtol=1e-20)
 print("Calculated energies: ", energies(seed,Full))
 
 
