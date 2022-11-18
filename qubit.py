@@ -19,6 +19,7 @@ import pickle
  
 #FUNCTIONS
 
+
 #Unitary transformation of 1 qubit
 def Unitary(x,y,z):
    return np.matrix([[np.cos(x/2), np.exp(z*1j)*np.sin(x/2)], [-np.exp((y-z)*1j)*np.sin(x/2), np.exp(y*1j)*np.cos(x/2)]])
@@ -133,6 +134,7 @@ print("Exact energies: ", w.real) #Eigenvalues
 #1. Minimizating function cost (all the energies)
 seed=list(np.full(15,0))
 seed = optimize.fmin(functioncost(Full,0.7,0.9).evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-12,xtol=1e-12)
+print(seed)
 exact = np.sort(energies(seed,Full))
 print("Calculated energies: ", exact)
 dif = [1-i/j for i,j in zip(exact,np.sort(w.real))]
