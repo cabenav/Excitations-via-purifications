@@ -125,21 +125,31 @@ q1 = 2
 q2 = 1
 q3 = 3
 q4 = 5
-Full = Free(p1,p2,p3,p4,q1,q2,q3,q4) + Interacting() #This computes the Hamiltonian
-w, v = LA.eig(Full)
-print("Exact energies: ", w.real) #Eigenvalues
-#print("Exact states: ", v.real) #Eigenvectors
 
-#VARIATIONAL CALCULATION OF THE ENERGIES
-#1. Minimizating function cost (all the energies)
-seed=list(np.full(15,0))
-seed = optimize.fmin(functioncost(Full,0.7,0.9).evalua, seed,maxfun=200000,maxiter=200000,ftol=1e-12,xtol=1e-12)
-print(seed)
-exact = np.sort(energies(seed,Full))
-print("Calculated energies: ", exact)
-dif = [1-i/j for i,j in zip(exact,np.sort(w.real))]
-print("Differences: ",  dif)
-print("Average error: ", sum(dif)/len(dif))
+i = 1
+lista = []
+
+while i < 501:
+   Full = Free(p1,p2,p3,p4,q1,q2,q3,q4) + Interacting() #This computes the Hamiltonian
+   w, v = LA.eig(Full)
+   #print("Exact energies: ", w.real) #Eigenvalues
+   #print("Exact states: ", v.real) #Eigenvectors
+   #VARIATIONAL CALCULATION OF THE ENERGIES
+   #1. Minimizating function cost (all the energies)
+   seed=list(np.full(15,0))
+   seed = optimize.fmin(functioncost(Full,0.7,0.9).evalua,seed,maxfun=200000,maxiter=200000,ftol=1e-12,xtol=1e-12)
+   #print(seed)
+   exact = np.sort(energies(seed,Full))
+   #print("Calculated energies: ", exact)
+   print(exact)
+   print(np.sort(w.real))
+   dif = [1-i/j for i,j in zip(exact,np.sort(w.real))]
+   lista.append(list(dif))
+   print("Differences: ",  dif)
+   print("Average error: ", sum(dif)/len(dif))
+   i+=1
+
+pickle.dump(lista, open("list.p", "wb" ) )
 
 #2. Minimizating function cost1 (only the ground state)
 seed=list(np.full(15,0))
